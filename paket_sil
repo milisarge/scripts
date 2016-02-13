@@ -14,5 +14,8 @@ icerik_sil(){
 	done < /var/lib/pkg/DB/"$paket"/files
 }
 
-icerik_sil
-# && rm -r -f /var/lib/pkg/DB/"$paket"
+icerik_sil && rm -r -f /var/lib/pkg/DB/"$paket"
+
+# kullanım: 
+
+# paket_sil nano
