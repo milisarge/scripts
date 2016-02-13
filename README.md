@@ -1,0 +1,3 @@
+# scripts
+
+script örnekleri
