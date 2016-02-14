@@ -8,8 +8,8 @@ icerik_sil(){
 	while read -r dosya
 	do
 		if [[ $(grep -c $dosya $dokunulmaz) -eq 0 ]]; then
-			echo /$dosya
-			#rm -r -f /$dosya
+			#echo /$dosya
+			rm -r -f /$dosya
 		fi
 	done < /var/lib/pkg/DB/"$paket"/files
 }
@@ -18,4 +18,4 @@ icerik_sil && rm -r -f /var/lib/pkg/DB/"$paket"
 
 # kullanım: 
 
-# paket_sil nano
+# paketsil nano

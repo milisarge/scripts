@@ -1,0 +1,12 @@
+#!/bin/bash
+paket="$1"
+
+icerik_ekle(){
+	tar tf $paket > /var/lib/pkg/DB/"$paketad"/files
+}
+
+icerik_ekle && tar xf $paket -C / 
+
+# kullanım: 
+
+# paketkur nano.mps.xz

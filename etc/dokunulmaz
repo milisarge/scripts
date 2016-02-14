@@ -1,0 +1,12 @@
+etc/
+usr/
+usr/bin/
+usr/sbin/
+usr/share/
+usr/share/doc/
+usr/share/man/
+usr/share/info/
+usr/share/man/man1/
+usr/share/man/man5/
+usr/share/man/tr/man1/
+usr/share/man/tr/man5/
