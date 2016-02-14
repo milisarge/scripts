@@ -1,12 +1,17 @@
 #!/bin/bash
 paket="$1"
-
+paketad=`echo "$1" | cut -d'#' -f1`	
+paketad=`basename $paketad`
+echo $paketad" paketi kuruluyor."
 icerik_ekle(){
-	tar tf $paket > /var/lib/pkg/DB/"$paketad"/files
+	mkdir -p /var/lib/pkg/DB/"$paketad" &&
+	tar xf $paket -C /  && 
+	mv /.MTREE /var/lib/pkg/DB/"$paketad"/files &&
+	mv /.META /var/lib/pkg/DB/"$paketad"/META &&
+	echo $paketad" paketi kuruldu."
 }
 
-icerik_ekle && tar xf $paket -C / 
-
+icerik_ekle
 # kullanım: 
 
 # paketkur nano.mps.xz

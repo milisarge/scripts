@@ -2,7 +2,7 @@
 paket="$1"
 dokunulmaz="/etc/dokunulmaz"
 
-
+echo $paketad" paketi siliniyor."
 #while IFS='' read -r line || [[ -n "$line" ]]; do
 icerik_sil(){
 	while read -r dosya
@@ -14,7 +14,9 @@ icerik_sil(){
 	done < /var/lib/pkg/DB/"$paket"/files
 }
 
-icerik_sil && rm -r -f /var/lib/pkg/DB/"$paket"
+icerik_sil && 
+rm -r -f /var/lib/pkg/DB/"$paket" &&
+echo $paketad" paketi silindi."
 
 # kullanım: 
 
