@@ -1,7 +1,7 @@
 #!/bin/bash
 versiyon="0.1"
 paketdepo="/depo/paketler/"
-sunucu="192.168.3.193:8000/paketdepo/"
+sunucu="ip:port/paketdepo/"
 ikaynak=""
 
 icerik_ekle(){
@@ -12,6 +12,7 @@ icerik_ekle(){
 	tar xf $1 -C /  && 
 	mv /.MTREE /var/lib/pkg/DB/"$paketad"/files &&
 	mv /.META /var/lib/pkg/DB/"$paketad"/META &&
+	ldconfig &&
 	echo $paketad" paketi kuruldu."
 }
 
