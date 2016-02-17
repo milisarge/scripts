@@ -1,0 +1,199 @@
+#!/bin/sh
+#
+#  ports
+#
+#  Copyright (c) 2002-2004 Per Liden
+#
+#  This program is free software; you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation; either version 2 of the License, or
+#  (at your option) any later version.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program; if not, write to the Free Software
+#  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307,
+#  USA.
+
+export PATH=/bin:/usr/bin
+
+check_ports_dir() {
+    if [ ! -d "$PORTS_DIR" ]; then
+	echo "$COMMAND: directory '$PORTS_DIR' not found"
+	exit 1
+    fi
+}
+
+update_ports() {
+    if [ $(id -u) -eq 0 ]; then
+	echo "$COMMAND: root should not update ports"
+	exit 1
+    fi
+
+    export PORTS_DIR
+
+    if [ "$OPT_COLLECTIONS" ]; then
+	# Update selected collections
+	for collection in $OPT_COLLECTIONS; do
+	    collection_exists=no
+	    for file in /etc/ports/$collection.*; do
+		collection_exists=yes
+		break
+	    done
+	    if [ "$collection_exists" = yes ]; then
+		for driver in /etc/ports/drivers/*; do
+		    if [ -x $driver ]; then
+			suffix=${driver##*/}
+			file=/etc/ports/$collection.$suffix
+			if [ -f $file ]; then
+			    $driver $file &
+			    break # don't use both cvsup and httpup
+			fi
+		    fi
+		done
+	    else
+		echo "$COMMAND: collection '$collection' not found"
+	    fi
+	done
+    else
+	# Update all collections
+	for driver in /etc/ports/drivers/*; do
+	    if [ -x $driver ]; then
+		suffix=${driver##*/}
+		for file in /etc/ports/*.$suffix; do
+		    $driver $file &
+		done
+	    fi
+	done
+
+	if [ ! "$driver" ]; then
+	    echo "$COMMAND: no driver(s) installed"
+	fi
+    fi
+    wait
+    echo 'Ports update done.'
+}
+
+list_ports() {
+    find $PORTS_DIR -name Pkgfile -follow -printf "%P\n" | sort | sed 's|/Pkgfile||'
+}
+
+list_differences_at_exit() {
+    rm -f $ports_list $output
+}
+
+list_differences() {
+    ports_list=$(mktemp) || exit 1
+    output=$(mktemp) || exit 1
+    echo "Collection Name Port Installed" > $output
+    trap list_differences_at_exit EXIT
+
+    find $PORTS_DIR -name Pkgfile -follow -printf "%P\n" | sort > $ports_list
+
+    set -- $(pkginfo -i)
+    while [ $# -ge 2 ]; do
+	package=$1
+	installed_version=$2
+	shift 2
+	port_list=$(grep "/$package/" $ports_list)
+	for port in $port_list; do
+	    source $PORTS_DIR/$port
+	    collection=${port%/*/Pkgfile}
+	    port_version="$version-$release"
+	    if [ "$installed_version" != "$port_version" ]; then
+		echo "$collection $package $port_version $installed_version" >> $output
+	    fi
+	done
+    done
+    if [ -s "$output" ]; then
+	sort $output| column -t
+    else
+	echo "No differences found"
+    fi
+}
+
+print_try_help() {
+    echo "Try '$COMMAND --help' for more information."
+}
+
+print_help() {
+    cat << EOF
+usage: $COMMAND [options] [collection ...]
+options:
+   -u, --update    update ports
+   -l, --list      list ports
+   -d, --diff      list version differences
+   -v, --version   print version and exit
+   -h, --help      print help and exit
+EOF
+}
+
+parse_options() {
+    unset OPT_MODE OPT_COLLECTIONS
+
+    for OPT in "$@"; do
+	case $OPT in
+	    -u|--update)
+		OPT_MODE=update ;;
+	    -l|--list)
+		OPT_MODE=list ;;
+	    -d|--diff)
+		OPT_MODE=diff ;;
+	    -v|--version)
+		echo "$COMMAND $VERSION"
+		exit 0 ;;
+	    -h|--help)
+		print_help
+		exit 0 ;;
+	    -*)
+		echo "$COMMAND: invalid option $OPT"
+		print_try_help
+		exit 1 ;;
+	    *)
+		OPT_COLLECTIONS="$OPT_COLLECTIONS $OPT" ;;
+        esac
+    done
+}
+
+main() {
+    parse_options "$@"
+
+    if [ "$OPT_MODE" = update ]; then
+	check_ports_dir
+	update_ports
+    elif [ "$OPT_MODE" = list ]; then
+	check_ports_dir
+	list_ports
+    elif [ "$OPT_MODE" = diff ]; then
+	check_ports_dir
+	list_differences
+    else
+	echo "$COMMAND: option missing"
+	print_try_help
+	exit 1
+    fi
+
+    exit 0
+}
+
+# zsh/bash portability stuff
+if [ -n "$ZSH_VERSION" ]; then
+    setopt braceexpand shwordsplit
+    emulate sh
+    NULLCMD=:
+fi
+
+# Affects sort order
+export LC_ALL=C
+
+VERSION="1.4"
+PORTS_DIR="/usr/ports"
+COMMAND=${0##*/}
+
+main "$@"
+
+# End of file

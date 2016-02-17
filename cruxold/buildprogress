@@ -1,0 +1,141 @@
+#!/bin/sh
+
+# Copyright 2005 by Han Boetes <hboetes@gmail.com>
+#
+# Permission is hereby granted, free of charge, to any person
+# obtaining a copy of this software and associated documentation
+# files (the "Software"), to deal in the Software without
+# restriction, including without limitation the rights to use,
+# copy, modify, merge, publish, distribute, sublicense, and/or
+# sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following
+# conditions:
+#
+# The above copyright notice and this permission notice shall be
+# included in all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+# EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+# OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+# NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+# HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+# WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+# OTHER DEALINGS IN THE SOFTWARE.
+
+# $Id: buildprogress,v 1.11 2005/04/21 01:21:08 han Exp $
+
+# Helptext incase the argument is -h or --help
+case $1 in
+    ''|-*)
+	cat << EOF
+Usage: ${0##*/} sourcedir [builddir]
+Show statistics about the buildprocess in directory \`\`sourcedir.''
+EOF
+	exit 0
+	;;
+    *)
+	:
+	;;
+esac
+
+sourcedir=$1
+builddir=$2
+if [ -z "$builddir" ]; then
+   builddir=$sourcedir
+fi
+
+if [ ! -d $sourcedir ]; then
+    echo "The sourcedir is gone!" >&2
+    exit 1
+fi
+
+# Some shells don't know this var, so I'll guess something.
+if [ -z "$COLUMNS" ]; then
+    COLUMNS=80
+fi
+
+objects=0
+sources=0
+startobjects=0
+starttime=$(date +%s)
+makefiles=0
+
+while [ -d $sourcedir ] && [ $objects -le $sources ]; do
+    # Check for Makefiles to find out if make is already running.
+    if [ $makefiles -eq 0 ]; then
+	makefiles=$(find $builddir -name 'Makefile' 2> /dev/null | wc -l)
+	starttime=$(date +%s)
+	[ $makefiles -eq 0 ] && echo 'No Makefiles found yet. I assume ./configure is still running'
+    fi
+
+    objects=$(find $builddir -name '*.o' 2> /dev/null | wc -l)
+    [ $startobjects -eq 0 ] && startobjects=$objects
+    # lots of projects generate sources during the buildprocess
+    # perhaps this should be done occasionally or conditionally
+    sources=$(find $sourcedir -name '*.cpp' -or -name '*.cc' -or -name '*.c' 2> /dev/null | wc -l)
+    if [ $sources -eq 0 ]; then
+	echo "$sourcedir doesn't contain any c or c++ sources." >&2
+	exit 1
+    fi
+
+    percentage=$(($objects*100/$sources))
+
+    # progressbar data:
+    gap10=$(($COLUMNS/10))
+    gap80=$(($COLUMNS*8/10))
+    progress=$(($gap80*$objects/$sources))
+    todo=$(($gap80-$progress))
+
+    # calculate ETA
+    now=$(date +%s)
+    elapsed=$(($now-$starttime))
+    objectsdone=$(($objects-$startobjects))
+    objectsleft=$(($sources-$objects))
+    if [ $objectsleft -lt 0 ]; then
+	echo "More objects than sources, I don't get it." >&2
+	exit 0
+    fi
+    if [ $objectsdone -gt 0 ]; then
+	factor=$(($elapsed*100/$objectsdone))
+	timeleft=$(($factor*$objectsleft))
+	timeleft=$(($timeleft/100))
+	hours=$(($timeleft/3600))
+	minutes=$(($timeleft/60))
+	minutes=$(($minutes-($hours*60)))
+	seconds=$(($timeleft-(($hours*3600)+($minutes*60))))
+	eta=$(printf '%02d:%02d:%02d' $hours $minutes $seconds)
+    else
+	eta=estimating
+    fi
+
+    # Now that we have all data print everything.
+
+    # print the header
+    clear
+    echo
+    echo "  Compile progress in $sourcedir"
+
+    printf "\n%${gap10}s%.${progress}s%.${todo}s\n" ' ' '################################################################################################################################################################################' '------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------'
+
+    echo
+    echo
+
+    # print statistics
+    cat << EOF
+  Sources:     $sources
+  Objects:     $objects
+  Percentage:  ${percentage}%
+  ETA:         $eta
+
+EOF
+    sleep 10
+done
+
+if [ $objects -eq $sources ]; then
+    echo "The buildstage is finished"
+fi
+
+if [ ! -d $sourcedir ]; then
+    echo "The sourcedir is gone!"  >&2
+fi

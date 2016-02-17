@@ -707,7 +707,7 @@ compress_archive() {
 }
 
 derle() {
-	if [ "$PKGMK_PAKETSIZ_DERLEME" = "yes" ]; then
+	if [ "$PAKETSIZ_DERLEME" = "evet" ]; then
 		paketsiz_derle
 	else
 		build_package
@@ -715,6 +715,48 @@ derle() {
 
 }
 
+paketsiz_derle() {
+	local BUILD_SUCCESSFUL="no"
+	
+	export PKG="/"
+	export SRC="$PKGMK_WORK_DIR/src"
+	umask 022
+	
+	cd $PKGMK_ROOT
+	rm -rf $PKGMK_WORK_DIR
+	mkdir -p $SRC
+	
+	info "Building '$TARGET'."
+	
+	if [ "$PKGMK_DOWNLOAD" = "yes" ]; then
+		download_source
+	fi
+	unpack_source
+	
+	cd $SRC
+	(set -e -x ; build)
+	
+	
+#	cd $PKG
+	
+	if [ $? = 0 ]; then
+		BUILD_SUCCESSFUL="yes"
+
+	fi
+        if [ "$PKGMK_KEEP_WORK" = "no" ]; then
+                rm -rf $PKGMK_WORK_DIR
+        fi
+	
+	if [ "$BUILD_SUCCESSFUL" = "yes" ]; then
+		info " '$TARGET' derleme basarili"
+	else
+		if [ -f $TARGET ]; then
+			touch -r $PKGMK_ROOT/$PKGMK_PKGFILE $TARGET &> /dev/null
+		fi
+		error " '$TARGET' derleme basarisiz"
+		exit 1
+	fi
+}
 
 build_package() {
 	# TODO find a better solution for the hardcoded folders
@@ -1374,7 +1416,7 @@ main() {
 			info "Package '$TARGET' is up to date."
 		else
 			download_source
-			build_package
+			derle
 		fi
 	else
 		FOUND=false
@@ -1386,7 +1428,7 @@ main() {
 				info "Package '$TARGET' is up to date."
 			else
 				download_source
-				build_package
+				derle
 				break
 			fi
 		done
@@ -1396,7 +1438,7 @@ main() {
 			download_source
 			PKGMK_BUILDVER="`get_package_builddate $TARGET`"
 			TARGET=$PKGMK_PACKAGE_DIR/${name}#$version-$PKGMK_ARCH.$PKGMK_PACKAGE_EXT
-			build_package $TARGET
+			derle $TARGET
 		fi
 	fi
 	if [ "$PKGMK_INSTALL" != "no" ]; then
