@@ -1,0 +1,163 @@
+####fittstoolrc example ####
+
+################ RIGHT ##################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[Right]
+
+LeftButton=xterm -C alsamixer #tiny
+MiddleButton=mrxvt -e cplay ~/music #tiny
+RightButton=amixer -q sset Master toggle #tiny
+
+#########################################
+###########  MOUSE WHEEL ################
+#########################################
+WheelUp=amixer -q sset Master 2+ #tiny
+WheelDown=amixer -q sset Master 2- #tiny
+
+
+
+
+############## TOP RIGHT ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[TopRight]
+
+#LeftButton=xfe #tiny
+MiddleButton=xfe #tiny
+#RightButton=xterm #tiny
+
+LeftButton=rox #light 
+#MiddleButton=rox #light
+#RightButton=xterm #light
+
+#LeftButton=spacefm #heavy
+#MiddleButton=grun #heavy
+RightButton=spacefm #heavy
+
+
+
+############## TOP LEFT #################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[TopLeft]
+#LeftButton=xterm #tiny
+#MiddleButton=bashrun2 #tiny
+#RightButton=xxxxxx #tiny
+
+#LeftButton=mrxvt #light
+MiddleButton=leafpad #light
+#RightButton=ristretto #light
+
+LeftButton=lilyterm #heavy
+#MiddleButton=grun #heavy
+RightButton=grun  #heavy
+
+
+############## BOTTOM LEFT ##############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[BottomLeft]
+
+#LeftButton=adie #tiny
+#MiddleButton=siag #tiny
+#RightButton=siag #tiny
+
+#LeftButton=leafpad #light
+#MiddleButton=gnumeric #light
+#RightButton=abiword #light
+
+LeftButton=lowriter #heavy
+MiddleButton=looffice #heavy
+RightButton=localc #heavy
+
+
+
+
+
+############# TOP CENTRE ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[TopCenter]
+
+#LeftButton=xterm #tiny
+#MiddleButton=siag #tiny
+#RightButton=xterm -e ranger #tiny
+
+#LeftButton=xterm #light
+#MiddleButton=gnumeric #light
+#RightButton=xterm #light
+
+#LeftButton=xterm #heavy
+#MiddleButton=lowcalc #heavy
+#RightButton=xterm #heavy
+
+
+
+
+
+########### BOTTOM CENTRE ###############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[BottomCenter]
+
+#LeftButton=links2 -g #tiny
+#MiddleButton=siag #tiny
+#RightButton=xterm #tiny
+
+#LeftButton=xterm #light
+#MiddleButton=gnumeric #light
+#RightButton=xterm #light
+
+#LeftButton=xterm #heavy
+#MiddleButton=lowcalc #heavy
+#RightButton=icecat #heavy
+
+
+
+
+
+
+
+################ LEFT ###################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[Left]
+
+#LeftButton=ffplay ~/movies #tiny
+#MiddleButton=bashburn2 #tiny
+#RightButton=xterm #tiny
+
+#LeftButton=whaaw #light
+#MiddleButton=xfburn #light
+#RightButton=xterm #light
+
+LeftButton=gmplayer #heavy
+MiddleButton=xfburn #heavy
+RightButton=whaaw #heavy
+
+
+
+
+
+
+############### BOTTOM RIGHT ###################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+#########################################
+[BottomRight]
+
+#LeftButton=cplay ~/music #tiny
+#MiddleButton=nted #tiny
+#RightButton=dxirc #tiny
+
+LeftButton=gogglesmm #light
+MiddleButton=sweep #light
+#RightButton=utox #light
+
+#LeftButton=exail #heavy
+#MiddleButton=audacity #heavy
+RightButton=mumble #heavy
+
+#Available positions: Left, TopLeft, etc, TopCenter, BottomCenter, Right, TopRight, BottomRight, etc...
+#Available events: LeftButton, RightButton, MiddleButton, WheelUp, WheelDown, WheelUpOnce, WheelDownOnce, Enter, Leave 
+

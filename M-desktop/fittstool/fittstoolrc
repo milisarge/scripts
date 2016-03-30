@@ -1,0 +1,108 @@
+ ############ fittstoolrc ################
+
+[TopCenter]
+
+LeftButton=lilyterm
+MiddleButton=openbox --exit
+RightButton=killall key-mon ; btrxtrlock-wrapper
+WheelUp=searchmonkey
+WheelDown=/usr/lib/Thunar/ThunarBulkRename
+WheelUpOnce=
+WheelDownOnce=
+Enter=
+Leave= 
+
+##############################
+[TopRight]
+
+#LeftButton=seamonkey
+#MiddleButton=claws-mail
+#RightButton=dxirc
+#WheelUp=utox
+#WheelDown=transmission-gtk
+#WheelUpOnce=
+#WheelDownOnce=
+#Enter=
+#Leave=
+
+#########################
+[Right]
+
+#LeftButton=bashrun2
+#MiddleButton=
+#RightButton=
+#WheelUp=xrandr --output VGA1 --brightness 1.2
+#WheelUpOnce=xrandr --output VGA1 --brightness 1
+#WheelDownOnce=xrandr --output VGA1 --brightness .9
+#WheelDown=xrandr --output VGA1 --brightness .8
+#Enter=
+#Leave=
+
+###########################
+[BottomRight]
+
+#LeftButton=wicd-gtk
+#MiddleButton=lilyterm -e weechat-curses 
+#RightButton=gftp
+#WheelUp=mumble
+#WheelDown=pidgen
+#WheelUpOnce=xchat
+#WheelDownOnce=lostirc
+Enter=
+Leave= 
+
+############################
+[BottomCenter]
+
+
+
+LeftButton=seamonkey
+MiddleButton=transmission-gtk
+RightButton=claws-mail
+#WheelUp=utox
+#WheelDown=mumble
+WheelUpOnce=
+WheelDownOnce=
+Enter=
+Leave=
+#########################
+[BottomLeft]
+
+LeftButton=leafpad
+MiddleButton=geany
+RightButton=lowriter
+#WheelUp=Ted
+#WheelDown=nedit
+#WheelUpOnce=xtem -e mc
+#WheelDownOnce=pyroom
+Enter=
+Leave= 
+
+##########################
+[Left]
+
+LeftButton=xterm -C alsamixer
+MiddleButton=amixer -q sset Master toggle 
+RightButton=mrxvt -e cplay ~/music
+WheelUp=amixer -q sset Master 2+
+WheelDown=amixer -q sset Master 2-
+WheelUpOnce=
+WheelDownOnce=
+Enter=
+Leave= 
+
+###########################
+[TopLeft]
+
+LeftButton=rox 
+MiddleButton=killall fittstool;fittstool
+RightButton=spacefm
+#WheelUp=lilyterm -e ranger
+#WheelDown=lilyterm -e mc
+#WheelUpOnce=
+#WheelDownOnce=
+#Enter=
+#Leave= 
+
+#Available positions: TopLeft, TopCenter, TopRight,  Right, BottomRight,  BottomCenter, BottomLeft, Left, 
+#Available events: LeftButton, RightButton, MiddleButton, WheelUp, WheelDown, WheelUpOnce, WheelDownOnce, Enter, Leave 

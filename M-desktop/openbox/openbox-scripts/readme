@@ -1,0 +1,12 @@
+scripts live in 
+
+~/.openbox/scripts/
+
+for the dynamic filebrowser obbrewser to work in openboc menu see here
+
+https://github.com/trizen/obbrowser
+
+For the rox bookmarks be in the openbox menu you need to enable 
+
+bookmarks.py
+

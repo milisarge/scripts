@@ -1,0 +1,4 @@
+#!/bin/bash
+sleep 1 && exec /usr/bin/btrxtrlock &
+xterm -e timeout 3 aafire 
+

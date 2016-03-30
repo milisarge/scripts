@@ -1,0 +1,168 @@
+Global {
+    edge = bottom
+    allign = right
+    margin = 0
+    widthtype = percent
+    width = 100
+    height = 10
+    transparent = true
+    tintcolor = #000000
+    alpha = 0
+    setdocktype = true
+    setpartialstrut = true
+    autohide = false
+    heightWhenHidden = 2
+    roundcorners = false
+    roundcornersradius = 0
+    layer = above
+    MaxElemHeight = 10
+    setlayer = false
+}
+Plugin {
+    type = space
+    config {
+        size = 2
+    }
+}
+Plugin {
+    type = menu
+    config {
+        IconSize = 10
+        icon = logo
+        systemmenu {
+        }
+        separator {
+        }
+        menu {
+            name = Computer
+            icon = computer
+            item {
+                name = Terminal
+                icon = terminal
+                action = lilyterm
+            }
+            separator {
+            }
+            item {
+                name = Reboot
+                icon = gnome-session-reboot
+                action = sudo reboot
+            }
+            item {
+                name = Shutdown
+                icon = gnome-session-halt
+                action = sudo shutdown -h now
+            }
+            item {
+                name = logout
+                icon = logout
+                action = /usr/libexec/fbpanel/xlogout
+            }
+        }
+    }
+}
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+Plugin {
+    type = taskbar
+    expand = true
+    config {
+        ShowIconified = true
+        ShowMapped = true
+        ShowAllDesks = true
+        tooltips = true
+        IconsOnly = true
+        MaxTaskWidth = 50
+    }
+}
+Plugin {
+   type = space
+   config {
+       size = 5
+   }
+}
+
+Plugin {
+    type = genmon
+    config {
+        Command = echo " CPU "$(sensors | grep 'CPU Temp' | cut -c22-25)"º"" |"
+        PollingTime = 2
+        TextSize = small
+        TextColor = #FF0000
+    }
+}
+Plugin {
+    type = genmon
+    config {
+        Command = echo " MB "$(sensors | grep 'MB Temp' | cut -c22-25)"º"
+        PollingTime = 2
+        TextSize = small
+        TextColor = #FF0000
+    }
+}
+Plugin {
+    type = mem
+    expand = false
+    padding = 2
+    config {
+        ShowSwap = false
+    }
+}
+Plugin {
+    type = cpu
+    config {
+        Color = green
+    }
+}
+Plugin {
+    type = net
+    expand = false
+    padding = 0
+    config {
+        interface = eth0
+        TxLimit = 20
+        RxLimit = 190
+        TxColor = red
+        RxColor = blue
+    }
+}
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+Plugin {
+    type = genmon
+    config {
+        Command = echo "Up: "$(ruptime)
+        PollingTime = 2
+        TextSize = small
+        TextColor = red
+    }
+}
+
+Plugin {
+    type = dclock
+    config {
+        ShowSeconds = true
+        HoursView = 24
+        TooltipFmt = %A %x
+	TextSize = small    
+        TextColor = green
+        Color = green
+    }
+}

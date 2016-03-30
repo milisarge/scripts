@@ -1,0 +1,170 @@
+####fittstoolrc example ####
+[BottomRight]
+####Bottom right corner: volume control:####
+#### uncomment JUST ONE #####
+LeftButton=xterm -C alsamixer #tiny
+#LeftButton=zmixer #light
+#LeftButton=gmplayer #heavy
+
+#### uncomment JUST ONE #####
+#MiddleButton=mrxvt -e cplay ~/music #tiny
+#MiddleButton=gogglesmm #light
+#MiddleButton=audacity #heavy
+
+#### uncomment JUST ONE #####
+RightButton=amixer -q sset Master toggle #tiny
+
+#### Don't uncomment  #####
+WheelUp=amixer -q sset Master 2+ #tiny
+WheelDown=amixer -q sset Master 2- #tiny
+
+
+[TopRight]
+####Top right corner: LMB : file managment ####
+#### uncomment JUST ONE #####
+#LeftButton=xfe #tiny
+LeftButton=rox #light 
+#LeftButton=spacefm #heavy
+
+####top-Right: MMB: Utility:####
+#### uncomment JUST ONE #####
+MiddleButton=xfe #tiny
+#MiddleButton=rox #light
+#MiddleButton=grun #heavy
+
+####Top-Right: RMB: Utility:#####
+#### uncomment JUST ONE #####
+#RightButton=xterm #tiny
+#RightButton=xterm #light
+RightButton=spacefm #heavy
+
+
+[TopLeft]
+####  Top-Left-corner Utility ####
+####Top-Left: LMB: Terminal:#####
+#### uncomment JUST ONE #####
+#LeftButton=xterm #tiny
+#LeftButton=mrxvt #light
+LeftButton=lilyterm #heavy
+
+####top-Left: MMB: Run-dialog:####
+#### uncomment JUST ONE #####
+MiddleButton=bashrun2 #tiny
+#MiddleButton=simpleswitcher #light
+#MiddleButton=grun #heavy
+
+####Top-Left: RMB: image viewers:#####
+#### uncomment JUST ONE #####
+#RightButton=sqiv #tiny
+#RightButton=ristretto #light
+RightButton=geeqie #heavy
+
+
+####  Bottom-Left-corner Office ####
+[BottomLeft]
+####Bottom-Left: LMB: Editor:#####
+#### uncomment JUST ONE #####
+#LeftButton=adie #tiny
+LeftButton=leafpad #light
+#LeftButton=geany #heavy
+
+####Bottom-Left: MMB: spreadsheet:####
+#### uncomment JUST ONE #####
+#MiddleButton=siag #tiny
+#MiddleButton=gnumeric #light
+MiddleButton=localc #heavy
+
+####Bottom-Left: RMB: Word processor:#####
+#### uncomment JUST ONE #####
+#RightButton=siag #tiny
+#RightButton=abiword #light
+RightButton=lowriter #heavy
+
+####  TopCenter: Start: ####
+[TopCenter]
+####Bottom-Left: LMB: xxxx:#####
+#### uncomment JUST ONE #####
+LeftButton=xterm #tiny
+#LeftButton=xterm #light
+#LeftButton=xterm #heavy
+
+#### TopCenter: MMB: xxxx: ####
+#### uncomment JUST ONE #####
+MiddleButton=siag #tiny
+#MiddleButton=gnumeric #light
+#MiddleButton=lowcalc #heavy
+
+#### TopCenter: RMB: xxxx: #####
+#### uncomment JUST ONE #####
+RightButton=xterm -e ranger #tiny
+#RightButton=xterm #light
+#RightButton=xterm #heavy
+
+####  BottomCenter: Start: Network ####
+#### uncomment JUST ONE #####
+[BottomCenter]
+####Bottom-Left: LMB: browsers :#####
+LeftButton=links2 -g #tiny
+#LeftButton=xterm #light
+#LeftButton=xterm #heavy
+
+#### BottomCenter: MMB: xxxx: ####
+#### uncomment JUST ONE #####
+#MiddleButton=siag #tiny
+MiddleButton=gnumeric #light
+#MiddleButton=lowcalc #heavy
+
+#### BottomCenter: RMB: xxxx: #####
+#### uncomment JUST ONE #####
+#RightButton=xterm #tiny
+#RightButton=xterm #light
+RightButton=icecat #heavy
+
+####  Left: Start: ####
+#### Uncomment one # in each section  LMB, MMB, RMB ####
+[Left]
+####Left: LMB: Multimedia-players :#####
+#### uncomment JUST ONE #####
+#LeftButton=ffplay ~/movies #tiny
+#LeftButton=whaaw #light
+LeftButton=gmplayer #heavy
+
+#### Left: MMB: burners: ####
+#### uncomment JUST ONE #####
+#MiddleButton=bashburn2 #tiny
+MiddleButton=xfburn #light
+#MiddleButton=xfburn #heavy
+
+#### Left: RMB: xxxx: #####
+#### uncomment JUST ONE #####
+#RightButton=xterm #tiny
+#RightButton=xterm #light
+RightButton=xine #heavy
+
+####  Right: Start: Sound ####
+#### Uncomment one # in each section  LMB, MMB, RMB ####
+[Right]
+#### Right: LMB: Music-players:#####
+#### uncomment JUST ONE #####
+LeftButton=cplay ~/music #tiny
+#LeftButton=gogglesmm #light
+#LeftButton=exail #heavy
+
+#### Right: MMB: sound-editors :####
+#### uncomment JUST ONE #####
+#MiddleButton=nted #tiny
+MiddleButton=sweep #light
+#MiddleButton=audacity #heavy
+
+#### Right: RMB: chat: #####
+#### uncomment JUST ONE #####
+#RightButton=dxirc #tiny
+#RightButton=utox #light
+RightButton=mumble #heavy
+
+
+
+
+#Available positions: Left, TopLeft, etc, TopCenter, BottomCenter, Right, TopRight, BottomRight, etc...
+#Available events: LeftButton, RightButton, MiddleButton, WheelUp, WheelDown, WheelUpOnce, WheelDownOnce, Enter, Leave 
+

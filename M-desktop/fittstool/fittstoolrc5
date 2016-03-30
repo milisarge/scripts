@@ -1,0 +1,98 @@
+############## fittstoolrc ########
+############## CLOCK-WISE ##############
+
+############# TOP CENTRE ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############### TERMINALS ###############
+
+[TopCenter]
+
+LeftButton=lilyterm
+MiddleButton=mrxvt
+RightButton=xterm 
+
+############## TOP RIGHT ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############ FILE-MANAGERS ##############
+
+[TopRight]
+
+LeftButton=gmplayer
+MiddleButton=xfburn 
+RightButton=xterm -e killall -QUIT icewm
+
+################ RIGHT ##################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ SOUND ##################
+
+[Right]
+
+
+LeftButton=lowriter 
+MiddleButton=looffice
+RightButton=localc 
+
+
+############### BOTTOM RIGHT ############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ CHAT ###################
+
+[BottomRight]
+
+LeftButton=dxirc
+MiddleButton=utox 
+RightButton=mumble 
+
+########### BOTTOM CENTRE ###############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ NET ####################
+
+[BottomCenter]
+
+LeftButton=seamonkey
+MiddleButton=transmissin-gtk
+RightButton=gftp
+
+############## BOTTOM LEFT ##############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############## OFFICE ###################
+
+[BottomLeft]
+
+LeftButton=leafpad
+MiddleButton=adie
+RightButton=abiword
+
+################ LEFT ###################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ VIDEO ##################
+
+[Left]
+
+LeftButton=xterm -C alsamixer 
+MiddleButton=mrxvt -e cplay ~/music 
+RightButton=amixer -q sset Master toggle 
+
+#########################################
+###########  MOUSE WHEEL ################
+################ SOUND ##################
+[Left]
+WheelUp=amixer -q sset Master 2+ 
+WheelDown=amixer -q sset Master 2- 
+
+#########################################
+
+############## TOP LEFT #################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################# RUN ###################
+
+[TopLeft]
+
+LeftButton=rox
+MiddleButton=xfe 
+RightButton=spacefm 
+
+
+#Available positions: Left, TopLeft, etc, TopCenter, BottomCenter, Right, TopRight, BottomRight, etc...
+#Available events: LeftButton, RightButton, MiddleButton, WheelUp, WheelDown, WheelUpOnce, WheelDownOnce, Enter, Leave 
+

@@ -1,0 +1,104 @@
+############fittstoolrc example ########
+############## CLOCK-WISE ##############
+
+############# TOP CENTRE ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############### TERMINALS ###############
+
+[TopCenter]
+
+LeftButton=lilyterm
+MiddleButton=mrxvt
+RightButton=xterm 
+
+############## TOP RIGHT ################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############ FILE-MANAGERS ##############
+
+[TopRight]
+
+LeftButton=rox
+MiddleButton=xfe 
+RightButton=spacefm 
+
+################ RIGHT ##################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ SOUND ##################
+
+[Right]
+
+LeftButton=xterm -C alsamixer 
+MiddleButton=mrxvt -e cplay ~/music 
+RightButton=amixer -q sset Master toggle 
+
+############### BOTTOM RIGHT ############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ CHAT ###################
+
+[BottomRight]
+
+LeftButton=dxirc
+MiddleButton=utox 
+RightButton=mumble 
+
+########### BOTTOM CENTRE ###############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############## OTHERS ###################
+
+[BottomCenter]
+
+#LeftButton=links2 -g 
+#MiddleButton=siag 
+#RightButton=xterm y
+
+#LeftButton=xterm 
+#MiddleButton=gnumeric 
+#RightButton=xterm 
+
+#LeftButton=xterm 
+#MiddleButton=lowcalc 
+#RightButton=icecat 
+
+############## BOTTOM LEFT ##############
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+############## OFFICE ###################
+
+[BottomLeft]
+
+LeftButton=lowriter 
+MiddleButton=looffice
+RightButton=localc 
+
+################ LEFT ###################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################ VIDEO ##################
+
+[Left]
+
+LeftButton=gmplayer 
+MiddleButton=xfburn 
+RightButton=whaaw 
+
+############## TOP LEFT #################
+#### JUST ONE FOR EACH MOUSE BUTTON #####
+################# RUN ###################
+
+[TopLeft]
+
+LeftButton=lilyterm 
+MiddleButton=bashrun2 
+RightButton=grun  
+
+#########################################
+###########  MOUSE WHEEL ################
+################ SOUND ##################
+
+WheelUp=amixer -q sset Master 2+ 
+WheelDown=amixer -q sset Master 2- 
+
+#########################################
+
+
+#Available positions: Left, TopLeft, etc, TopCenter, BottomCenter, Right, TopRight, BottomRight, etc...
+#Available events: LeftButton, RightButton, MiddleButton, WheelUp, WheelDown, WheelUpOnce, WheelDownOnce, Enter, Leave 
+
