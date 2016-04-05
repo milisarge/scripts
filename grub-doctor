@@ -1,0 +1,254 @@
+#!/bin/bash
+# Licensed under the GNU General Public License Version 2
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+####################################################################################################
+## Copyright 2009-2012 Anthony Nordquist and Tony Brijeski
+## Some of this code was borrowed from Tony Brijeski's Remastersys installer and Remastersys grub restore utility, and he deserves lots of credit for having code worth jacking. This code has been modified to suit the purpose of this program :) 
+
+ 
+Question='yad  --wrap --center --image=gtk-dialog-question --button=gtk-no:1 --button=gtk-yes:0 --title=Grub-Doctor --window-icon=/usr/share/pixmaps/grub-doctor.png'
+
+Info='yad --center --title=Grub-Doctor --window-icon=/usr/share/pixmaps/grub-doctor.png'
+
+
+## Cry like a little girl if we don't have root
+TestRoot="$(whoami)"
+
+if [ "$TestRoot" != "root" ]; then
+ yad --title="Grub Doctor" --text="Must be run with root privileges, will now exit" --button=$"gtk-ok:1"
+ exit 0
+fi
+
+
+
+## Just in case people don't know what this is, inform them.
+
+$Question --width=200 --text="This is a boot-loader restoration utility (GRUB2). Would you like to restore the system boot-loader?"
+
+if [ "$?" != "0" ]; then
+ exit 0
+fi
+
+## Need to get the root partition from the user.
+
+Drives=$(cat /proc/partitions | grep -v loop | grep -v "Extended" | grep -v "extended" | grep -v "swap" | grep -v "Swap" | grep -v "Hidden" | grep -v major | grep -v "^$" | grep -v "sr"| awk '{ print $4}')
+
+for i in $Drives; do
+  PartDrive="$i"
+## Get the label of the disk if available
+ Label=$(find /dev/disk/by-label/* -printf %f" "%l\\n | grep "$PartDrive" | awk '{print $1}' | sed -e 's|\\x20| |g')
+
+if [ "$Label" = "" ]; then
+ Label=' '
+else
+ Label="$Label     "
+fi
+
+PartDriveSize=$(grep -m 1 "$i" /proc/partitions | awk '{print $3}')
+## Part Drive Size is in blocks, first we need to convert the blocks to bytes
+## Don't bother with extended partitions
+if [ "$PartDriveSize" != "1" ]; then
+  BlockSize=$(df -P /dev/$PartDrive | grep "blocks" | awk '{print $2}' | awk -F '-' '{print $1}')
+## Multiply blocks by block size to get bytes
+ SizeInBytes=$(($PartDriveSize * $BlockSize))
+## Divide Bytes by 1024 to get Kilobytes
+ SizeInKB=$(($SizeInBytes / 1024))
+## Divide Kilobytes by 1024 to get Megabytes
+ SizeInMB=$(($SizeInKB / 1024))
+## Divide Megabytes by 1024 to get Gigabytes
+ SizeInGB=$(($SizeInMB / 1024))
+## Bash always removes the decimels causing it to round down, this makes it round up.
+ SizeInGB=$(($SizeInGB + 1))
+fi
+if [ "$(echo "$PartDrive" | grep [0-9] )" != "" ]; then
+ if [ "$PartDriveSize" != "1" ]; then
+  if [ "$PartDriveMenu" = "" ]; then
+   PartDriveMenu=("$PartDrive" "$Label" "$SizeInGB" "$SizeInMB")
+  else
+   PartDriveMenu=("${PartDriveMenu[@]}" "$PartDrive" "$Label" "$SizeInGB" "$SizeInMB")
+  fi
+ fi
+fi
+if [ "$(echo "$PartDrive" | grep [0-9] )" = "" ]; then
+ GrubMenu=("${GrubMenu[@]}" "$PartDrive" "Master boot record of disk")
+fi
+done
+
+GrubMenu=("${GrubMenu[@]}" "root" "Root Partition (Advanced)")
+
+GetRootPart () {
+
+RootPart=""
+
+RootPart=$(yad --height="300" --list  --window-icon="/usr/share/pixmaps/grub-doctor.png" --title="Grub Doctor" --column="Name" --column="Partition Label" --column="Approx. Size in GiB" --column="Approx. Size in MiB" --print-column=1 --button=$"gtk-quit:3" --button=$"gtk-ok:2" --text="Please select the root partition of SalineOS, or another GRUB2 based distribution." "${PartDriveMenu[@]}")
+
+ret="$?"
+
+if [ "$ret" = "3" ]; then
+  $Question --text="Are you sure you want to cancel the installation?"
+  if [ "$?" = "0" ]; then
+   exit 0
+  else
+   GetRootPart
+   exit 0
+  fi
+elif [ "$ret" = "252" ]; then
+ GetRootPart
+ exit 0 
+elif [ "$RootPart" = "" ]; then
+ $Info --text="No partition selected, please retry." --button=$"gtk-ok:1"
+ GetRootPart
+ exit 0
+fi
+
+
+RootPart=$(echo "$RootPart" | awk -F '|' '{print $1}')
+
+
+}
+
+GetRootPart
+
+## Find out where grub is going
+
+GetGrubLocation (){
+GrubLocation=""
+
+
+GrubLocation=$(yad --list --window-icon="/usr/share/pixmaps/grub-doctor.png" --title="Grub Doctor" --column="Name" --column="Description" --height="300" --width="275" --wrap --button=$"gtk-quit:3" --button=$"gtk-ok:2" --text="   Please select where to install grub.   \n" "${GrubMenu[@]}")
+
+ret="$?"
+
+if [ "$ret" = "3" ]; then
+  $Question --text="Are you sure you want to cancel the installation?"
+  if [ "$?" = "0" ]; then
+   exit 0
+  else
+   GetGrubLocation
+   exit 0
+  fi
+elif [ "$ret" = "252" ]; then
+  $Question --text="Are you sure you want to cancel the installation?"
+  if [ "$?" = "0" ]; then
+   exit 0
+  else
+   GetGrubLocation
+   exit 0
+  fi
+elif [ "$GrubLocation" = "" ]; then
+ $Info --text="No location selected, please retry." --button=$"gtk-ok:1"
+ GetGrubLocation
+ exit 0
+fi
+
+GrubLocation=$(echo "$GrubLocation" | awk -F '|' '{print $1}')
+
+if [ "$GrubLocation" = "root" ]; then
+ GrubLocation="/dev/$RootPart"
+else
+ GrubLocation="/dev/$GrubLocation"
+fi
+
+}
+
+GetGrubLocation
+
+## Ask for confirmation before we do anything drastic
+$Question --text="Grub will be installed on "$GrubLocation"\n\nContinue with operation?"
+
+if [ "$?" = "1" ]; then
+ $Info --text="Operation cancelled, will now exit" --button=$"gtk-ok:1"
+ exit
+fi
+
+## Start Progress bar
+tail -f /usr/bin/grub-doctor | yad --center --pulsate --progress --auto-close --title="Grub Doctor" --no-buttons --window-icon=/usr/share/pixmaps/grub-doctor.png --text="     Installing and setting up grub...Please Wait     \n" &
+
+## Test to see if we are installing from a running system
+
+GrubTest1=$(mount | grep ' / ')
+GrubTest2=$(blkid /dev/"$RootPart" | awk -F 'UUID="' '{print $2}' | awk -F '"' '{print $1}')
+GrubTest3=$(echo "$GrubTest1" | grep "$GrubTest2")
+ 
+if [ "$GrubTest3" = "" ]; then
+ umount "$GrubDir"
+ umount -l "$GrubDir"
+ GrubDir="/tmp/remmnt/Target"
+
+ ## Mount the root directory
+ umount "/dev/$RootPart"
+ umount -l "/dev/$RootPart"
+ sleep 2
+ if [ ! -d $GrubDir ]; then
+  mkdir -p $GrubDir
+ fi
+ mount /dev/$RootPart $GrubDir -o rw
+
+## Check to ensure that the partition was mounted properly.
+
+if [ "$(mount | grep "/dev/$RootPart" | awk '{print $3}')" != "/tmp/remmnt/Target" ]; then
+if [ "$GrubTest3" = "" ]; then
+ killall -KILL tail
+ yad --width="250" --wrap --window-icon="/usr/share/pixmaps/grub-doctor" --title="Grub Doctor" --text="Failed to mount $RootPart, please ensure there are no files in use on the partition and then run Grub Doctor again." --button=$"gtk-quit:1"
+ exit 0
+fi
+fi
+
+## Check the archetecture of host system and root partition matches.
+
+Arch1="$(file /usr/bin/file | awk '{print $3}')"
+Arch2="$(file /tmp/remmnt/Target/usr/bin/file | awk '{print $3}')"
+
+
+if [ "$Arch1" != "$Arch2" ]; then
+ killall -KILL tail
+ yad --width="250" --wrap --window-icon="/usr/share/pixmaps/grub-doctor" --title="Grub Doctor" --text="Archetecture of the host system does not match the selected root partition. To restore grub for $RootPart you will need to run Grub Doctor from a $Arch2 system." --button=$"gtk-quit:1"
+ umount -l /tmp/remmnt/Target
+ exit 0
+fi
+ 
+ ## Prepare chroot
+ mount -o bind /proc $GrubDir/proc
+ mount -o bind /dev  $GrubDir/dev
+ mount -o bind /sys  $GrubDir/sys
+ 
+ ## The meat and potatoes of this script
+ chroot $GrubDir grub-install --force --no-floppy "$GrubLocation"
+ chroot $GrubDir update-grub
+
+ ## Dismount
+ umount $GrubDir/proc
+ umount $GrubDir/dev
+ umount $GrubDir/sys
+else
+ grub-install --no-floppy --force "$GrubLocation"
+ update-grub
+fi
+
+## Unmount partition
+umount -l /tmp/remmnt/Target
+
+## Stop the progress bar
+TailPID=$(pgrep -f "tail -f /usr/bin/grub-doctor")
+
+kill $TailPID
+
+## Tell the user we are done now
+$Info --text="             Grub installation complete.             \n" --button=$"gtk-ok:1"
+
+##
+#
+exit 0
