@@ -1,0 +1,12 @@
+#!/bin/bash
+key=""
+channelName=`yad --entry --text "Please enter a username"`
+channelId=`curl -s "https://www.googleapis.com/youtube/v3/channels?part=id&forUsername=$channelName&key=$key" | jshon -CQ -e items -a -e snippet -uppe id -e id | tail -1 | sed -e 's/^"//'  -e 's/"$//'`
+get_videos() { curl -s "https://www.googleapis.com/youtube/v3/search?q=${1// /%20}&type=video&part=snippet&maxResults=30&order=date&channelId=$channelId&key=$key" | jshon -CQ -e items -a -e snippet -e title -uppe id -e videoId | awk 'NR%2{prev=$0; next} {print ; print prev}' | sed '0~2 a\FALSE\' | sed '1s/^/FALSE\n/' | sed '$ d'; }
+select_video() { yad --list --checklist --column "Select" --column "Id" --column "Name" --separator "" --print-column=2 --width=600 --height=400; }
+
+play() {
+	get_videos | select_video
+}
+videoid=`play | sed -e 's/^"//'  -e 's/"$//'`
+mpv --fs "https://www.youtube.com/watch?v=$videoid"
