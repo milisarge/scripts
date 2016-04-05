@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Dropped Notes
+Name[fr]=Notes déposées
+Name[ru]=Коллекция заметок
+Exec=tazdrop --notes
+Icon=slitaz-menu
+Categories=GTK;Utility;TextTools;
