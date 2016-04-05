@@ -1,0 +1,85 @@
+#!/bin/sh
+#
+# Tazkeymap - SliTaz GNU/Linux keymap config using loadkeys and dialog boxes.
+# Configuration file is: /etc/keymap.conf
+#
+# Copyright (C) 2008-2015 SliTaz GNU/Linux - BSD License
+#
+# Author: Christophe Lincoln <pankso@slitaz.org>
+#
+
+. /lib/libtaz.sh
+export TEXTDOMAIN='slitaz-tools' #i18n
+
+
+# List all keymaps.
+
+list_keymaps() {
+	cd /usr/share/kbd/keymaps/i386
+	# We first need a list to sort and then use \n for Yad list.
+	for i in $(find *rty *rtz dvorak -name *.map.gz); do
+		keymap=$(basename $i)
+		type=$(dirname $i)
+		echo "${keymap%.map.gz} $type"
+	done
+}
+
+
+# Load the selected kmap file from /usr/share/kbd/keymaps or Busybox kmaps.
+
+load_keymap() {
+	if [ -x /bin/loadkeys ]; then
+		loadkeys -u $kmap
+	else
+		loadkmap < /usr/share/kmap/$kmap.kmap
+	fi
+}
+
+
+# Config /etc/keymap.conf and update Xorg keyboard config
+
+system_config() {
+	echo "$kmap" > /etc/keymap.conf
+	tazx keyboard
+}
+
+
+case "$1" in
+	info)
+		_ 'Config file: %s' '/etc/keymap.conf'
+		_ 'Current keymap: %s' "$(cat /etc/keymap.conf)" ;;
+	list)
+		list_keymaps | sort ;;
+	"")
+		# Default to text mode dialog.
+		: ${DIALOG=dialog --timeout 60}
+		check_root
+		exec 3>&1
+		value=$($DIALOG  --clear \
+		--title "{ $(_n 'SliTaz keyboard setting') }" \
+		--menu "" 20 72 14 \
+		$(list_keymaps | sort) \
+		2>&1 1>&3)
+		retval=$?
+		exec 3>&-
+		case $retval in
+			0) continue ;;
+			1|255) exit 0 ;;
+		esac
+		# If it's a reconfiguration give an info message.
+		if [ -s /etc/keymap.conf ]; then
+			$DIALOG --clear --title " $(_n 'Information') " \
+				--msgbox "$(_n 'Please logout of your current session and login again to use new keyboard.')" 16 70
+		fi
+		kmap=$value
+		system_config
+		load_keymap ;;
+	*)
+		# Used to configure keymap from cmdline or scripts
+		kmap=$1
+		check_root
+		system_config
+		load_keymap ;;
+esac
+
+exit 0

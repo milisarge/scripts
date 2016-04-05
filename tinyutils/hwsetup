@@ -1,0 +1,812 @@
+#!/bin/sh
+# usage: hwsetup [device]
+# e.g.,  hwsetup printer
+# #
+# Copyright (C) 2009-2015 SliTaz GNU/Linux - GNU GPL v3
+# Authors : Rohit Joshi <jozee@slitaz.org>
+#
+
+. /lib/libtaz.sh
+. /etc/slitaz/slitaz.conf
+export TEXTDOMAIN='slitaz-tools' #i18n
+
+DEVICE=$1
+DEPENDS=""
+AUTO_INSTALL_SUGGESTED="no"
+CONFIRM_SUGGESTED="no"
+NON_FREE="no"
+DETECTED="no"
+USB_IDS=/usr/share/misc/usb.ids.gz
+
+
+usage() {
+	newline
+	_ 'SliTaz Setup configuration'
+	newline
+	boldify $(_n 'Usage:')
+	echo "  $(basename $0) [$(_n 'command')] [--$(_n 'option')]"
+	newline
+	boldify $(_n 'Commands:')
+	optlist "\
+usage		$(_n 'Print this short usage.')
+printer		$(_n 'Parallel and USB Printer setup.')
+scanner		$(_n 'USB Scanner setup.')
+webcam		$(_n 'Integrated and USB webcam setup.')
+camera		$(_n 'Digital Camera setup.')
+bluetooth	$(_n 'Bluetooth setup.')
+3g-modem	$(_n '3g-modem setup.')
+firewall	$(_n 'Start/stop firewall.')
+nvidia		$(_n 'Nvidia (non-free/free) setup.')
+ati			$(_n 'ATI (non-free/free) setup.')"
+	newline
+	boldify $(_n 'Options:')
+	optlist "\
+--nonfree	$(_n 'install non-free packages (nvidia, ati).')
+--suggested	$(_n 'auto-install optional dependencies.')
+--confirm	$(_n 'confirm before installing optional dependencies')"
+	newline
+}
+
+
+run_daemon_startup() {
+	# Add server to rcS.conf and avoid duplication.
+	. /etc/rcS.conf
+	if ! echo "$RUN_DAEMONS" | grep -q "$1"; then
+		sed -i "s/^RUN_DAEMONS=\"\(.*\)\"/RUN_DAEMONS=\"\1 $1\"/" /etc/rcS.conf
+	fi
+}
+
+
+device() {
+	SUGGESTED=""
+	case "$DEVICE" in
+		printer)
+			DEPENDS="$DEPENDS cups cups-pdf usbutils hal-info ghostscript aspell aspell-en"
+			SUGGESTED="hplip gutenprint foomatic-filters foomatic-db hal-cups-utils foomatic-db-nonfree ufr2 splix"
+			CONFIRM_SUGGESTED="yes"
+			GROUP="lp" ;;
+		scanner)
+			DEPENDS="$DEPENDS xsane usbutils hal-info"
+			SUGGESTED="hplip"
+			GROUP="scanner lp" ;;
+		webcam)
+			DEPENDS="$DEPENDS v4l-dvb usbutils hal-info"
+			SUGGESTED="xorg-xf86-video-v4l linux-video libv4l "
+			GROUP="video audio lp" ;;
+		camera)
+			DEPENDS="$DEPENDS gphoto2 usbutils hal-info"
+			GROUP="camera lp" ;;
+		bluetooth)
+			DEPENDS="$DEPENDS bluez usbutils hal-info pygobject dbus-python"
+			GROUP="lp" ;;
+		3g-modem)
+			DEPENDS="$DEPENDS linux-dialup wvdial pcmciautils usbutils hal-info"
+			GROUP="dialout lp" ;;
+		firewall)
+			DEPENDS="iptables slitaz-tools"
+			SUGGESTED="nmap"
+			GROUP="" ;;
+		nvidia)
+			DEPENDS="mesa mesa-demos linux-agp xorg-xf86-video-nv"
+			NON_FREE_DEPENDS="mesa mesa-demos linux-agp nvidia"
+			GROUP="video" ;;
+		ati)
+			DEPENDS="xorg-xf86-video-ati mesa-dri-ati mesa-demos"
+			NON_FREE_DEPENDS="mesa mesa-demos mesa-dri linux-agp catalyst"
+			GROUP="video" ;;
+	esac
+}
+
+
+untested() {
+	newline; separator
+	longline $(_ "Due to a lack of compatible hardware for troubleshooting, \
+this %s device has not been properly tested. Please report any success, \
+failure, bug to SliTaz Bug tracker or Forum." "$DEVICE")
+	separator; newline
+	sleep 1
+}
+
+
+failed() {
+	newline; separator
+	_ 'Failed to setup %s' "$DEVICE"
+	separator; newline
+	sleep 1
+}
+
+
+# Install DEPENDS and/or SUGGESTED
+
+install() {
+	for pkg in $1 ; do
+		# Avoid reinstall
+		if [ ! -d "$INSTALLED/$pkg" ]; then
+			_ 'Installing pkg: %s' "$pkg"
+			tazpkg get-install "$pkg"
+			if tazpkg list-files "$pkg" | grep -q "/etc/udev" ; then
+				UDEV_RULES="yes"
+			fi
+		fi
+	done
+}
+
+
+# Install DEPENDS and/or SUGGESTED
+
+confirm_install() {
+	for pkg in $1 ; do
+		# Avoid reinstall
+		if [ ! -d "$INSTALLED/$pkg" ]; then
+			_n 'Would you like to install pkg: %s' "$pkg"; confirm
+			if [ $? == 0 ]; then
+				tazpkg get-install "$pkg" --forced
+				if tazpkg list-files "$pkg" | grep -q "/etc/udev" ; then
+					UDEV_RULES="yes"
+				fi
+			fi
+		fi
+	done
+}
+
+
+add_all_user_to_group() {
+	USERS=$(grep /home /etc/passwd | cut -d: -f1)
+	#echo "checking $USERS in $GROUP"
+	for grp in $GROUP ; do
+		for user in $USERS ; do
+			if ! grep -q "$grp.*$user.*" /etc/group ; then
+				_ 'adding %s to %s' "$user" "$grp"
+				addgroup "$user" "$grp"
+			fi
+		done
+	done
+}
+
+
+find_usb_device() {
+	case "$DEVICE" in
+		printer|scanner|camera) PATTERN="Cls=00" ;;
+		bluetooth) PATTERN="Cls=e0" ;;
+	esac
+
+	if [ -f /proc/bus/usb/devices ]; then
+		# no vendor entry in dmesg ??
+		#dmesglogs=`dmesg | tail -20`
+		DETECTED="no"
+		count=1
+
+		# assume device to be in last 3 entries; use tac
+		DEVICES_LIST=$(cat /proc/bus/usb/devices | grep ^[TDP] | \
+			grep -B1 -A1 "$PATTERN" | grep -i vendor | awk ' { print $2,$3 } ' | \
+			sed 's/ /   /'|sed 's/Vendor=//' | sed 's/ProdID=//' | tail -3)
+		_ 'Detected USB Device : Vendor : Product'
+		separator
+		echo "$DEVICES_LIST" | while read line
+		do
+			vendorid=$(echo "$line" | awk '{ print $1 }')
+			[ -n "$vendorid" ] || continue
+			productid=$(echo "$line" | awk '{ print $2 }')
+			vendor=$(zcat $USB_IDS | grep $vendorid | head -1)
+			product=$(zcat $USB_IDS | grep $productid | head -2 | \
+				awk ' { print $1,$2,$3,$4} ' | sed -e :a -e '$!N;s/\n/ ; /;ta')
+			_ ' %s) Vendor  : %s ' "$count" "$vendor"
+			_ '    Product : %s' "$product"
+			separator
+			count=$(expr $count + 1)
+		done
+		# confirm (use dmesg or some other way to automate this)
+		confirm_device
+	fi
+}
+
+
+confirm_device() {
+	_n 'Which no. is your %s shown in the above lines (1,2,3,none)? ' "$DEVICE"
+	read choice
+	case "$choice" in
+		1|2|3)
+			dev=$(echo "$DEVICES_LIST" | head -$choice | tail -1)
+			vendorid=$(echo "$dev" | awk '{ print $1 }')
+			productid=$(echo "$dev" | awk '{ print $2 }')
+			bus=$(grep -B2 ".*$vendorid.*$productid" /proc/bus/usb/devices | grep Bus)
+			busno=$(echo $bus | awk '{ print $2 }' | cut -d"=" -f2)
+			deviceno=$(echo $bus | awk '{ print $8 }')
+			HP=$(echo $vendor | grep -q -i "Hewlett")
+			DETECTED="yes"
+			;;
+		*)
+			DETECTED="no" ;;
+	esac
+}
+
+
+hputil() {
+	if [ "$HP" == "1" ]; then
+		install "hplip"
+		newline
+		_n 'Do you want to use hp-setup utility'; confirm
+		if [ $? == 0 ]; then
+			hp-setup
+		fi
+	fi
+}
+
+
+# udev now should do this correctly
+
+fix_usb_permissions() {
+	grp=$1
+	if [ "$DETECTED" == "yes" ]; then
+		if ls /dev/bus/usb/*$busno/*$deviceno ; then
+			chmod 666 /dev/bus/usb/*$busno/*$deviceno
+			chgrp $grp /dev/bus/usb/*$busno/*$deviceno
+			newline; separator
+			boldify "$(_ 'Verify %s Permissions' "$DEVICE")"
+			_ 'Your %s must be in %s group with rw-rw-rw- permissions' "$DEVICE" "$grp"
+			ls -l /dev/bus/usb/*$busno/*$deviceno
+			separator; newline
+		fi
+	fi
+}
+
+
+fix_parallel_permissions() {
+	if [ -f /usr/lib/cups/backend/parallel ] ; then
+		chmod 0755 /usr/lib/cups/backend/parallel
+	fi
+}
+
+
+load_modules() {
+	tazhw detect-pci
+	tazhw detect-usb
+	sleep 1
+}
+
+
+udev() {
+	if [ "$UDEV_RULES" == "yes" ]; then
+		_ 'New udev rules are added by a package'
+		udevadm trigger
+		sleep 2
+	fi
+}
+
+
+xorg() {
+	[ -x /usr/bin/Xorg ] || install "xorg"
+	_ 'Auto configuring Xorg...'
+
+	# Xorg auto configuration.
+	if [ ! -d /etc/X11/xorg.conf.d -a -x /usr/bin/Xorg ]; then
+		_ 'Configuring Xorg...'
+		# Populate /etc/X11/xorg.conf.d if it doesn't exist.
+		sed -i 's|/usr/bin/Xvesa|/usr/bin/Xorg|' /etc/slim.conf
+		sed -i 's|^xserver_arguments|\#xserver_arguments|' /etc/slim.conf
+		tazx config-xorg
+	fi
+}
+
+
+get_wvdial_vars() {
+	PHONE=$(   grep ^Phone         $CONF | cut -d= -f2 | tr -d '[" ]')
+	USERNAME=$(grep ^Username      $CONF | cut -d= -f2 | tr -d '[" ]')
+	PASSWORD=$(grep ^Password      $CONF | cut -d= -f2 | tr -d '[" ]')
+	PIN=$(     grep AT+CPIN=       $CONF | cut -d= -f3 | tr -d '[" ]')
+	MODEM=$(   grep ^Modem.*/dev.* $CONF | cut -d= -f2 | tr -d '[" ]' | uniq)
+	APN=$(     grep AT+CGDCONT     $CONF | cut -d, -f3 | tr -d '[" ]')
+	[ "x$USERNAME" == "x''" ] && USERNAME=
+	[ "x$PASSWORD" == "x''" ] && PASSWORD=
+}
+
+
+set_wvdial_vars() {
+	# wvdial needs something right the equal sign
+	[ x$USERNAME == x ] && USERNAME="''"
+	[ x$PASSWORD == x ] && PASSWORD="''"
+	sed 's|^Phone.*|Phone = '$PHONE'|; s|^Username.*|Username = '$USERNAME'|; \
+	s|^Password.*|Password = '$PASSWORD'|; s|.*AT+CPIN=.*|Init4 = AT+CPIN='$PIN'|; \
+	s|.*AT+CGDCONT=.*|Init3 = AT+CGDCONT=1,"IP", "'$APN'"|; \
+	s|^Modem.*/dev.*|Modem = '$MODEM'|' -i $CONF
+}
+
+
+wvdialbox_main() {
+	icon=network-transmit-receive
+	yad --title="$(_n 'Wvdial Box')" --window-icon=$icon --center \
+		--image=$icon \
+		--form \
+		--field="$(_n 'Phone Number:')" "$PHONE" \
+		--field="$(_n 'Username:')" "$USERNAME" \
+		--field="$(_n 'Password:'):H" "$PASSWORD" \
+		--field="$(_n 'Pin (if required):'):H" "$PIN" \
+		--field="$(_n 'Modem:')" "$MODEM" \
+		--field="$(_n 'Access Point Name (APN):')" "$APN" \
+		--field="<b>$(_n 'You must save your account info before dialing')</b>:LBL" "" \
+		--field="$(_n 'Edit config file'):BTN" "leafpad $CONF" \
+		--button="$(_n 'Save Configuration'):2" \
+		--button="$(_n 'Dial Pin Once'):1" \
+		--button="gtk-connect:3"
+		# --always-print-result
+}
+
+
+wvdialbox() {
+	# setup your modem
+	#wvdialconf
+	#set username, password, pin
+	#echo -e "Edit \033[1m /etc/wvdial.conf \033[0m  for phone number, login name, password and pin"
+	CONF=/etc/wvdial.conf
+	if [ ! -f $CONF ]; then
+		APN="apn.yournet.net"
+		PHONE="*99#"
+		USERNAME="user"
+		PASSWORD="passwd"
+		PIN="9999"
+		[ -n "$MODEM" ] || MODEM="/dev/ttyUSB0"
+		cat > $CONF <<EOT
+[Dialer slitaz]
+Phone = $PHONE
+Username = $USERNAME
+Password = $PASSWORD
+Stupid Mode = 1
+Dial Command = ATDT
+Modem = $MODEM
+Baud = 460800
+Init1 = ATZ
+Init2 = ATQ0 V1 E1 S0=0 &C1 &D2 +FCLASS=0
+Init3 = AT+CGDCONT=1,"IP", "$APN"
+ISDN = 0
+Modem Type = Analog Modem
+
+[Dialer pin]
+Modem = $MODEM
+Init4 = AT+CPIN=$PIN
+EOT
+	fi
+	#<action>sed -i "s/^\[Dialer.*/[Dialer slitaz]/" /etc/wvdial.conf</action>
+	#DIALER=`grep Dialer /etc/wvdial.conf | sed \'2d\'|tr \"[]\" \" \"|cut -d \" \" -f 3`
+	#DIALER=`grep -B1 AT+CPIN /etc/wvdial.conf | sed \'2d\'|tr \"[]\" \" \"|cut -d \" \" -f 3`
+
+	get_wvdial_vars
+
+	CONF_VARS=$(wvdialbox_main); BUTTON="$?"
+	PHONE=$(   echo $CONF_VARS | cut -d"|" -f1)
+	USERNAME=$(echo $CONF_VARS | cut -d"|" -f2)
+	PASSWORD=$(echo $CONF_VARS | cut -d"|" -f3)
+	PIN=$(     echo $CONF_VARS | cut -d"|" -f4)
+	MODEM=$(   echo $CONF_VARS | cut -d"|" -f5)
+	APN=$(     echo $CONF_VARS | cut -d"|" -f6)
+
+	case "$BUTTON" in
+		2) set_wvdial_vars; wvdialbox ;;
+		1) terminal -geometry 80x16 -title "Wvdial" -e "$0 dial pin" ;;
+		3) terminal -geometry 80x16 -title "Wvdial" -e "$0 dial slitaz" ;;
+	esac
+}
+
+
+setup() {
+	case "$DEVICE" in
+		printer)
+			load_modules
+			udev
+
+			# check parallel or usb printer
+			if [ -f /proc/sys/dev/parport/parport*/autoprobe* ] ; then
+				fix_parallel_permissions
+				DETECTED="yes"
+			else
+				find_usb_device
+				fix_usb_permissions "lp"
+			fi
+
+			#lpinfo -v
+			if [ "$DETECTED" == "yes" ]; then
+				newline
+				_n 'Do you want to start cups'; confirm
+				if [ $? == 0 ]; then
+					newline
+					/etc/init.d/cupsd start
+					sleep 2
+					browser http://localhost:631/
+				else
+					newline; separator
+					emsg "$(_ 'Starting <b>cups</b> using:')"
+					echo "/etc/init.d/cupsd start"
+					echo "browser http://localhost:631/"
+					separator; newline
+				fi
+			else
+				failed
+			fi
+			;;
+
+		scanner)
+			load_modules
+			udev
+			find_usb_device
+			fix_usb_permissions "scanner"
+
+			if [ "$DETECTED" == "yes" ]; then
+				#hputil
+				newline
+				_n 'Do you want to start scanner'; confirm
+				if [ $? == 0 ]; then
+					newline
+					sane-find-scanner # to verify scanner has been found
+					scanimage -L # List scanners
+					xsane #scanner application
+				else
+					newline; separator
+					emsg "$(_ 'Following <b>scanner commands</b> may be of help:')"
+					echo '  sane-find-scanner # ' $(_n 'to verify scanner has been found')
+					echo '  xsane # ' $(_n 'scanner application')
+					separator
+				fi
+			else
+				failed
+			fi
+			;;
+
+		webcam)
+			load_modules
+			udev
+
+			if [ -n "$(ls /dev/video0)" ] ; then
+				# fix permissions
+				chmod 666 /dev/video0
+				# ls -l /dev/video0
+
+				if [ -d $INSTALLED/mplayer-svn ]; then
+					newline
+					_n 'Would you like to test webcam'; confirm
+					if [ $? == 0 ]; then
+						newline
+						mplayer tv:// -tv driver=v4l2:width=320:height=240:device=/dev/video0 -vo x11 &
+					fi
+				else
+					newline
+					_n 'Would you like to test webcam by installing mplayer-svn'; confirm
+					if [ $? == 0 ]; then
+						newline
+						install mplayer-svn
+						mplayer tv:// -tv driver=v4l2:width=320:height=240:device=/dev/video0 -vo x11 &
+					else
+						newline; separator
+						_ "Webcam is set up; please use mplayer-svn/fswebcam/amsn/skype to view"
+						separator
+					fi
+				fi
+			else
+				failed
+			fi
+			;;
+
+		camera)
+			udev
+			find_usb_device
+			fix_usb_permissions "camera"
+
+			if [ "$DETECTED" == "yes" ]; then
+				newline
+				_n 'Do you want to check if gphoto2 can talk to your camera'; confirm
+				if [ $? == 0 ]; then
+					newline
+					# Show if the camera is detected
+					gphoto2 --auto-detect
+					_n 'Do you want to test importing photos'; confirm
+					if [ $? == 0 ]; then
+						mkdir -p ~/Images/Photos
+						cd ~/Images/Photos
+						gphoto2 --get-all-files
+						file-manager ~/Images/Photos
+					fi
+				newline
+				else
+					newline; separator
+					_ 'Camera is set up; please use gphoto2 to import photos'
+					_ 'Quick start guide: %s' 'http://www.gphoto.org/doc/manual/using-gphoto2.html'
+					separator; newline
+				fi
+			else
+				failed
+			fi
+			;;
+
+		bluetooth)
+			load_modules
+			udev
+
+			_n 'Do you want to see if the bluetooth is working'; confirm
+			if [ $? == 0 ]; then
+				newline
+
+				# sanity check: btusb is not loaded automagically for unknown reasons
+				if ! lsmod | grep -q btusb ; then
+					modprobe btusb
+				fi
+				separator
+				emsg "$(_n '<b>Bluetooth</b> interfaces')"
+				newline
+				lsusb | grep Bluetooth
+
+				# udev should run bluetoothd automatically
+				bluetoothd
+				sleep 1
+				if hcitool dev | grep -q hci ; then
+					newline; separator
+					emsg "$(_n 'Following <b>Bluetooth commands</b> may be of help')"
+					newline
+					optlist "\
+modprobe btusb	
+hciconfig -a	
+hcitool dev		$(_n 'checking local bluetooth devices...')
+hcitool scan	$(_n 'scanning remote bluetooth devices...')
+bluez-simple-agent	$(_n 'pairing with remote bluetooth devices...')"
+					newline
+					bt=$(emsg '<b>/etc/bluetooth</b>')
+					longline $(_ "You can manually edit the configuration \
+files in %s if need be" "$bt")
+					separator; newline
+				fi
+			else
+				# Show if the bluetooth is detected
+				newline; separator
+				emsg "$(_n 'Following <b>Bluetooth commands</b> may be of help')"
+				newline
+				cat << EOT
+  modprobe btusb
+  lsusb | grep Bluetooth
+EOT
+				optlist "\
+/usr/sbin/bluetoothd -nd	$(_n 'for starting bluetooth daemon')
+hciconfig -a	
+hcitool dev		$(_n 'for checking local devices')
+hcitool scan	$(_n 'for scanning remote devices')
+bluez-simple-agent	$(_n 'pairing with remote bluetooth devices')"
+				newline
+				bt=$(emsg '<b>/etc/bluetooth</b>')
+				longline $(_ "You can manually edit the configuration files \
+in %s if need be" "$bt")
+				newline; separator
+			fi
+			;;
+
+		3g-modem)
+			untested
+			load_modules
+			udev
+			newline; separator
+			_ 'List detected devices'
+			# ls /dev/ttyUSB* /dev/ttyACM* /dev/modem
+
+			if [ -n "$(ls /dev/ttyUSB*)" -o -n "$(ls /dev/ttyACM*)" ] ; then
+				_ 'Detected Modem at:'
+				ls /dev/ttyUSB* /dev/ttyACM* 2> /dev/null
+				_n 'Do you want to configure wvdial'; confirm
+				if [ $? == 0 ]; then
+					wvdialbox
+				else
+					#nameserver `tail -30 /var/log/messages| grep DNS| sed 's/*\([.0-9]*\)$/\1/'` >/etc/resolv.conf
+					newline; separator
+					optlist "\
+wvdialconf	$(_ 'Edit %s for phone number, login name, password and pin' "$(boldify '/etc/wvdial.conf')")
+wvdial		$(_ 'Add DNS address of your provider in %s' "$(boldify '/etc/resolv.conf')")"
+					separator
+				fi
+			else
+				failed
+			fi
+			;;
+
+		firewall)
+			_ 'Setting IPTABLES_RULES to yes in /etc/slitaz/firewall.conf'
+			sed -i 's/^IPTABLES_RULES="no"/IPTABLES_RULES="yes"/' /etc/slitaz/firewall.conf
+			# default is "start"
+			if [ "$STOP" == "yes" ] ; then
+				/etc/init.d/firewall stop
+			else
+				/etc/init.d/firewall start
+				if [ -d $INSTALLED/nmap ]; then
+					separator
+					_ 'Probing for open ports...'
+					nmap localhost
+					separator
+				fi
+				_ 'Adding firewall daemon to start automatically at boot'
+				run_daemon_startup "firewall"
+				separator
+			fi
+			;;
+
+		nvidia)
+			xorg55=/etc/X11/xorg.conf.d/55-DeviceTweaks.conf
+			xorg60=/etc/X11/xorg.conf.d/60-Device.conf
+			xorg55short=55-DeviceTweaks.conf
+			if [ "$NON_FREE" == "yes" ] ; then
+				if [ -d $INSTALLED/xorg-xf86-video-nv ]; then
+					rm $xorg55
+					tazpkg remove xorg-xf86-video-nv
+				fi
+				load_modules
+				#xorg
+				_n 'Do you want to configure X using non-free nvidia driver'; confirm
+				if [ $? == 0 ]; then
+					newline
+					_ 'Your previous config is in %s' "$xorg60"
+					_ 'If nvidia fails, you can remove %s to restore previous config.' "$xorg55"
+					Xorg -configure :1 > /dev/null
+					nvidia-xconfig -c /root/xorg.conf.new -o /tmp/xorg.conf.nvidia
+					sed -e '/Section "Device"/,/EndSection/!d' -e "s/EndSection/EndSection\n/" /tmp/xorg.conf.nvidia > $xorg55
+					rm /tmp/xorg.conf.nvidia /root/xorg.conf.new
+
+					if ! grep -q "NoLogo" $xorg55 ; then
+						_n 'Adding to xorg.conf:'; echo ' Option "NoLogo" "True"'
+						sed -i 's/BoardName\(.*\)/Boardname \1 \n  Option "NoLogo" "True" /' $xorg55
+					fi
+
+					# mesa-demos to check if acceleration is working
+					_ 'Checking if nvidia is working...'
+					glxinfo | grep rendering
+
+					newline; separator
+					boldify "$(_n 'Configure nvidia settings:')"
+					nvidia-settings
+					separator; newline
+				else
+					newline; separator
+					xcmd='Xorg -configure :1 && nvidia-xconfig -c /root/xorg.conf.new -o /tmp/xorg.conf.nvidia'
+					_ "Use '%s' to generate a template configuration file." "$xcmd"
+					echo 'glxinfo | grep rendering #' $(_n 'test nvidia')
+					_ 'Use: nvidia-settings utility to configure your settings if necessary'
+					echo 'Option "NoLogo" "True"'
+					separator; newline
+				fi
+			else
+				if [ -d $INSTALLED/nvidia ]; then
+					rm $xorg55
+					tazpkg remove nvidia
+				fi
+				load_modules
+				#xorg
+				_n 'Do you want to configure X using free nvidia driver'; confirm
+				if [ $? == 0 ]; then
+					newline; separator
+					_ 'Your previous config is in %s' "$xorg60"
+					_ 'If nvidia fails, you can remove %s to restore previous config.' "$xorg55"
+					newline
+					_ 'Create %s configured with nv driver.' "$xorg55short"
+
+					# free nvidia driver is called nv
+					cp -a $xorg60 $xorg55
+					sed -i 's/vesa/nv/' $xorg55
+
+					# mesa-demos to check if acceleration is working
+					_ 'Checking if nvidia is working...'
+					glxinfo | grep rendering
+					separator
+				fi
+			fi
+		;;
+
+		ati)
+			xorg55=/etc/X11/xorg.conf.d/55-DeviceTweaks.conf
+			xorg60=/etc/X11/xorg.conf.d/60-Device.conf
+			xorg55short=55-DeviceTweaks.conf
+			untested
+			if [ "$NON_FREE" == "yes" ] ; then
+				if [ -d $INSTALLED/xorg-xf86-video-ati ]; then
+					rm $xorg55
+					tazpkg remove xorg-xf86-video-ati
+				fi
+				load_modules
+				#xorg
+				_n 'Do you want to configure X using non-free catalyst ATI (radeon) driver'; confirm
+				if [ $? == 0 ]; then
+					newline
+					_ 'Your previous config is in %s' "$xorg60"
+					_ 'If ati fails, you can remove %s to restore previous config.' "$xorg55"
+
+					# add fglrx driver to xorg.conf
+					Xorg -configure :1 > /dev/null
+					aticonfig --initial --input=/root/xorg.conf.new --output=/tmp/xorg.conf.ati
+					sed -e '/Section "Device"/,/EndSection/!d' -e "s/EndSection/EndSection\n/" /tmp/xorg.conf.ati > $xorg55
+					rm /tmp/xorg.conf.ati /root/xorg.conf.new
+
+					# mesa-demos to check if acceleration is working
+					_ 'Checking if ati catalyst is working...'
+					glxinfo | grep rendering
+				else
+					newline; separator
+					boldify "$(_n 'Configuration:')"
+					_ 'Use: aticonfig utility to generate a template configuration file if necessary'
+					cat << EOT
+Xorg -configure :1 && aticonfig --initial --input=/root/xorg.conf.new --output=/tmp/xorg.conf.ati
+restart xorg
+glxinfo | grep rendering
+EOT
+					separator; newline
+				fi
+			else
+				if [ -d $INSTALLED/catalyst ]; then
+					rm $xorg55
+					tazpkg remove catalyst
+				fi
+				load_modules
+				#xorg
+				_n 'Do you want to configure X using free ATI (radeon) driver'; confirm
+				if [ $? == 0 ]; then
+					newline; separator
+					_ 'Your previous config is in %s' "$xorg60"
+					_ 'If ATI fails, you can remove %s to restore previous config.' "$xorg55"
+					newline
+					_ 'Create %s configured with radeon driver.' "$xorg55short"
+
+					# free ati driver is called radeon
+					cp -a /etc/X11/xorg.conf.d/60-Device.conf /etc/X11/xorg.conf.d/55-DeviceTweaks.conf
+					sed -i 's/vesa/nv/' /etc/X11/xorg.conf.d/55-DeviceTweaks.conf
+					# mesa-demos to check if acceleration is working
+					_ 'Checking if ATI radeon is working...'
+					glxinfo |grep rendering
+					separator
+				fi
+			fi
+		;;
+	esac
+}
+
+
+# What to do.
+
+case "$1" in
+	-h|--help|help|usage)	usage ;;
+	wvdial)		wvdialbox ;;
+	xorg)		xorg ;;
+
+	dial)
+		_ 'Bringing eth0 down...'; ifconfig eth0 down; ifconfig eth1 down
+		_ 'Dialing...'; wvdial $2
+		sleep 5 ;;
+
+	*)
+		check_root $@
+		echo "COMMAND OPTIONS: $@"
+		NON_FREE="$nonfree"
+		AUTO_INSTALL_SUGGESTED="$suggested"
+		CONFIRM_SUGGESTED="$confirm"
+		for i in "$@"; do
+#			if [ "$i" == "--non-free" ] ;  then NON_FREE="yes"; 				fi
+#			if [ "$i" == "--suggested" ] ; then AUTO_INSTALL_SUGGESTED="yes"; 	fi
+#			if [ "$i" == "--confirm" ] ;   then CONFIRM_SUGGESTED="yes"; 		fi
+			if [ "$i" == "stop" ] ;        then STOP="yes"; 					fi
+		done
+
+		device
+		#untested
+		if [ -n "$NON_FREE_DEPENDS" -a "$NON_FREE" == "yes" ]; then
+			DEPENDS="$NON_FREE_DEPENDS"
+		fi
+
+		if [ "$AUTO_INSTALL_SUGGESTED" == "yes" ]; then
+			anser="all"
+		elif [ "$CONFIRM_SUGGESTED" == "yes" ]; then
+			newline; separator
+			_ 'The following optional packages can be installed:'
+			newline
+			echo $SUGGESTED
+			separator; newline
+			_n 'Do you want to install all/few/no optional dependencies (all|few|N)? '; read anser
+		fi
+
+		install "$DEPENDS"
+		case $anser in
+			[aA]*|[yY]|1)	install "$SUGGESTED" ;;
+			[fF]*|2)		confirm_install "$SUGGESTED" ;;
+			*) ;;
+		esac
+
+		add_all_user_to_group
+		setup ;;
+esac

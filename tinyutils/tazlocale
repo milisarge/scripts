@@ -1,0 +1,190 @@
+#!/bin/sh
+#
+# Tazlocale: SliTaz GNU/Linux locale setting using dialog boxes.
+# Configuration file is: /etc/locale.conf
+#
+# Copyright (C) 2008-2015 SliTaz GNU/Linux - BSD License
+#
+# Author: Christophe Lincoln <pankso@slitaz.org>
+#
+
+. /lib/libtaz.sh
+export TEXTDOMAIN='slitaz-tools' #i18n
+
+
+usage() {
+	newline
+	_ 'SliTaz GNU/Linux locale setting using dialog boxes.'
+
+	newline; boldify "$(_ 'Usage:')"
+	echo "  tazlocale [$(_ 'option')]"
+
+	newline; boldify "$(_ 'Options:')"
+	optlist "\
+info	$(_ 'Show info about config file and current locale.')
+list	$(_ 'Show list of available locales.')"
+
+	newline
+	_ 'Any other option treated as locale - set locale (root).'
+	_ 'Display locale selecting dialog if no option given (root).'
+	newline
+}
+
+
+# Make symlink to file, substitute "%%" to "ll_CC", "ll" or "en" according to
+# current language settings and file existence
+# (where "ll_CC" - full locale format (lang and country, and maybe, modifier).
+
+make_i18n_link() {
+	if [ -d $(dirname ${1/.%%/}) ]; then
+		cd $(dirname ${1/.%%/})
+
+		if [ -e ${1/%%/$LANG} ]; then
+			ln -fs $(basename ${1/%%/$LANG}) ${1/.%%/}
+		else
+			if [ -e ${1/%%/$LANGUAGE} ]; then
+				ln -fs $(basename ${1/%%/$LANGUAGE}) ${1/.%%/}
+			else
+				ln -fs $(basename ${1/%%/en}) ${1/.%%/}
+			fi
+		fi
+	fi
+}
+
+
+# Create symlink to translated files provided by SliTaz language pack,
+# doc and config files.
+
+link_language_files() {
+	. /etc/locale.conf
+	LANGUAGE=${LANG%_*}
+	[ "$LANG" == 'POSIX' ] && LANGUAGE='en'
+
+	# Openbox menu
+	make_i18n_link /etc/xdg/openbox/menu.%%.xml
+
+	# Documentation
+	make_i18n_link /usr/share/doc/slitaz/index.%%.html
+
+	# SliTaz Software Manuals
+	for soft in tazpkg tazlito tazusb tazwok tazweb cookutils; do
+		make_i18n_link /usr/share/doc/$soft/$soft.%%.html
+	done
+
+	# SliTaz TazWeb "My Web Home"
+	make_i18n_link /usr/share/tazweb/home.%%.html
+
+	# SliTaz WebHome
+	make_i18n_link /usr/share/webhome/index.%%.html
+
+	# TazPanel Doc under www
+	make_i18n_link /var/www/tazpanel/doc/tazpanel.%%.html
+
+	# SliTaz Tools Manuals
+	for soft in burnbox tazinst; do
+		make_i18n_link /usr/share/doc/slitaz-tools/$soft.%%.html
+	done
+}
+
+
+# Locale name displayed.
+
+get_locale_name() {
+	for i in $(ls -1 /usr/share/i18n/locales | grep [a-z]_[A-Z]); do
+		echo -n "$i "
+		desc=$(grep ^title /usr/share/i18n/locales/$i | cut -d '"' -f 2)
+		if [ -n "$desc" ]; then
+			echo "$desc" | tr -c '[A-Za-z0-9\n]' '_'
+		else
+			echo "Locale"
+		fi
+	done
+}
+
+
+# We have no locale files in /usr/lib/locale by default.
+# Run localedef in background to have a faster boot.
+
+gen_utf8_locale() {
+	if [ ! -d "/usr/lib/locale/$locale.UTF-8" ]; then
+		localedef -i "$locale" -c -f 'UTF-8' "/usr/lib/locale/$locale.UTF-8" &
+	fi
+}
+
+
+# Config /etc/locale.conf
+
+system_config() {
+	# If locale not defined: show error and exit
+	ls "/usr/share/i18n/locales/$locale" >/dev/null || return
+	export LC_ALL="$locale.UTF-8"
+	action 'Setting system locale to: %s' "$locale.UTF-8"
+	echo -e "LANG=$locale.UTF-8\nLC_ALL=$locale.UTF-8" > /etc/locale.conf
+	status
+	gen_utf8_locale
+	link_language_files
+	# Clean TazPanel cached headers in old language
+	[ -n "$(which tazpanel)" ] && tazpanel cc
+}
+
+
+# Dialog menu.
+
+dialog_menu() {
+	exec 3>&1
+	locale=$($DIALOG  --clear \
+	--title "{ $(_n 'SliTaz language setting') }" \
+	--menu "" 20 72 14 \
+"en" "English" \
+$(get_locale_name) \
+2>&1 1>&3)
+	retval=$?
+	exec 3>&-
+	case $retval in
+		0) continue ;;
+		1|255) exit 0 ;;
+	esac
+
+	# Default: POSIX => English
+	[ "$locale" = 'en' ] && locale='en_US'
+	[ -s /etc/locale.conf ] && RECONFIG='yes'
+
+	# If it's a reconfiguration give an info message.
+	if [ -n "$RECONFIG" ]; then
+		export LC_ALL=$locale
+		msg=$(_n "\
+Please logout of your current session and login again to use new locale.")
+		$DIALOG --clear --title " $(_n 'Information') " --msgbox "$msg" 16 70
+	fi
+	system_config
+}
+
+case "$1" in
+	--help|-h)
+		usage ;;
+	info)
+		. /etc/locale.conf
+		_ 'Config file: %s' '/etc/locale.conf'
+		_ 'Current locale: %s' "$LANG"
+		;;
+	list)
+		list=
+		for i in $(ls -1 /usr/share/i18n/locales | grep '[a-z]_[A-Z]'); do
+			desc=$(fgrep -m1 title /usr/share/i18n/locales/$i | cut -d'"' -f2)
+			list="$list
+$i	$desc"
+		done
+		optlist "$list" ;;
+	"")
+		# No args: display Ncurses dialog.
+		: ${DIALOG=dialog --timeout 60}
+		check_root $@
+		dialog_menu ;;
+	*)
+		# Usage: tazlocale LANG_COUNTRY
+		locale=$1
+		check_root $@
+		system_config ;;
+esac
+
+exit 0

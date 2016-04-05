@@ -1,0 +1,9 @@
+#!/bin/sh
+# 
+# Fake history command for Ash.
+#
+
+. /lib/libtaz.sh
+export TEXTDOMAIN='slitaz-tools' #i18n
+
+cat $HOME/.ash_history 2>/dev/null || _ 'No history file found...'

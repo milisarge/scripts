@@ -1,0 +1,35 @@
+#!/bin/sh
+# Launch SliTaz default Web browser.
+#
+
+. /etc/slitaz/applications.conf
+
+USER_CONFIG="${XDG_CONFIG_HOME:-$HOME/.config}/slitaz/applications.conf"
+[ -f  $USER_CONFIG ] && . $USER_CONFIG
+
+EXEC="exec setsid $BROWSER"
+
+[ "$(which $BROWSER)" ] || case "$1" in
+file://*)
+	exec xterm -e "sh -c \"sed 's/<[^>]*>//g;s/&lt;/</g;s/&gt;/>/g;s/&amp;/\\&/g' < ${1#file://} | uniq | less\""
+esac
+
+if [ -z "$XAUTHORITY" ]; then
+	# console session
+	EXECT="$BROWSER"
+else
+	# Xorg session
+	case $BROWSER in
+		links) EXECT="$EXEC -g" ;;
+		*)     EXECT="terminal -e $BROWSER" ;;
+	esac
+fi
+
+case $BROWSER in
+	*links*|retawq|lynx) $EXECT    $@ ;;
+	w3m)                 $EXECT -N $@ ;;
+	qupzil*)             $EXEC -ow $@ ;;
+	*)                   $EXEC     $@ ;;
+esac
+
+exit 0
