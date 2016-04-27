@@ -1,0 +1,124 @@
+frusen's method:
+I resize my desktop to 800x600 and record using the following command:
+ffmpeg -video_size 800x600 -framerate 30 -f x11grab -i :0.0 -vcodec libx264 -crf 23 -preset ultrafast capture.mkv
+And then I convert it to webm using the following command:
+ffmpeg -i capture.mkv -vcodec libvpx -acodec libvorbis render.webm
+
+
+#### kelsoo's settings ####
+
+I run 2 scripts. "capture-libre-start" then "capture-stop-mux-clean".  
+
+Kelsoo's capture script
+"capture-libre-start"
+
+#!/bin/bash
+## capture screen and rename with date and time year-month-day-hour-seconds in a libre format
+##default##works##
+#ffmpeg -f alsa -ac 1 -ar 44100 -i hw:1  zzzz.ogg &
+#ffmpeg  -video_size 1440x900 -framerate 20 -f x11grab -i :0.0 -c:v libvpx -crf 04 -b:v 1M  zzzz.webm &
+#video info
+#-crf 4  #smallest  number is 4 better quality#
+#-crf 51  #biggest  number is 51 worse quality#
+ffmpeg -f alsa -ac 1 -ar 44100 -i hw:1  zzzz.ogg &
+#ffmpeg  -video_size 1440x900 -framerate 20 -f x11grab -i :0.0 -c:v libvpx -crf 4 -b:v 1M  zzzz.webm &
+ffmpeg  -video_size 2560x1024 -framerate 20 -f x11grab -i :0.0 -c:v libvpx -crf 4 -b:v 1M  zzzz.webm &
+## for re-encoding ##
+#ffmpeg -y -i VIDEO_INPUT.Y4M -i AUDIO_INPUT.WAV -c:v libvpx -b:v 1200k quality best -vf scale=-1:720 -c:a libvorbis -pass 2 W-720.WEBM
+## with scale worse quality? ##
+##ffmpeg  -video_size 1440x900 -framerate 20 -f x11grab -i :0.0  -c:v libvpx -crf 04  -b:v 1M -vf scale=-1:720 zzzz.webm &
+
+
+
+"capture-stop-mux-clean"
+
+#!/bin/bash
+killall ffmpeg  &&
+sleep 10 &&
+#ffmpeg -i zzzz.ogg -i zzzz.webm -c copy  -shortest muxed.webm &&
+## capture screen mux
+#ffmpeg -i zzzz.ogg -i zzzz.webm -c copy  -shortest Dragora-cast`date +%Y%m%d%H%M%S`.webm &&
+ffmpeg -i zzzz.ogg -i zzzz.webm -c copy  -shortest Dragora-cast`date +%Y%m%d%H%M`.webm &&
+sleep 10 &&
+## remove zzzz.ogg zzzz.webm
+rm zzzz.ogg 
+rm zzzz.webm
+sleep 10 &&
+mv Dragora-cast*.webm ~/screencasts
+
+#### kelsoo's settings end ####
+
+
+
+#screencaptue with sound.#
+ffmpeg -f alsa -ac 1 -ar 44100 -i hw:1 -video_size 1440x900 -framerate 30 -f x11grab -i :0.0 -vcodec libx264 -crf 23 -preset ultrafast capture.mkv
+
+
+as I understand it
+
+ffmpeg -f alsa -ac 1 -ar 44100 -i hw:1 -video_size 1440x900 -framerate 30 -f x11grab -i :0.0 -vcodec libx264 -crf 23 -preset ultrafast capture.mkv
+
+
+sound bit explained:
+ffmpeg -f 
+force alsa:   
+use alsa not oss.
+
+-alsa -ac 1 
+audiochannel 1:
+mono not stereo -ac2
+
+-ar 44100 
+audiorate 44100:
+ Specifying audio sampling rate/frequency will force the audio card to record the audio at that specified rate. Usually the default value is "44100" (Hz).
+
+hardware-device 1:
+soundcard 0 is default use "arecord -l" to list or "alsamixer F6"
+
+
+video bit explained:
+-video_size 1440x900
+size of screen area to capture from top left. Use "xrandr" to get your screen size
+
+-framerate 30
+capture 30 frames per second 
+
+-f x11grab
+Capture from your screen 
+
+-i :0.0
+Which screen is being captured -i :0.0 if your capturing and viewing the same on the same computer
+
+-vcodec libx264 
+The codec to capture in
+
+-crf 23 
+the compression 
+
+
+-preset ultrafast
+speed of compression
+
+ 
+captured file name and output container.
+capture.mkv
+ 
+
+
+#finding your devices#  The three arguments (in order: CARD,DEV,SUBDEV)specify card number or identifier, device number and subdevice number(-1 means any).
+https://trac.ffmpeg.org/wiki/Capture/ALSA
+
+bash-4.2$ arecord -l
+**** List of CAPTURE Hardware Devices ****
+card 0: Intel [HDA Intel], device 0: ALC888 Analog [ALC888 Analog]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 0: Intel [HDA Intel], device 2: ALC888 Alt Analog [ALC888 Alt Analog]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+card 1: A900 [Anua Mic CM 900], device 0: USB Audio [USB Audio]
+  Subdevices: 1/1
+  Subdevice #0: subdevice #0
+bash-4.2$ 
+
+
