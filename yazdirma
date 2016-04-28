@@ -1,0 +1,2 @@
+lpr -P Zebra_TLP2844 -o raw %s 
+cat %s > /dev/usb/lp0 
