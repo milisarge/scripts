@@ -1,0 +1,58 @@
+Global {
+    edge = bottom
+    allign = right
+    margin = 15
+    widthtype = pixel
+    width = 105
+    height = 24
+    transparent = true
+    tintcolor = #000000
+    alpha = 0
+    setdocktype = true
+    setpartialstrut = true
+    autohide = false
+    heightWhenHidden = 2
+    roundcorners = false
+    roundcornersradius = 0
+    layer = above
+    MaxElemHeight = 10
+    setlayer = false
+}
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+Plugin {
+    type = mem
+    expand = false
+    padding = 2
+    config {
+        ShowSwap = false
+    }
+}
+
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+
+
+
+Plugin {
+    type = dclock
+    config {
+        ShowSeconds = true
+        HoursView = 24
+        TooltipFmt = %A %x
+	TextSize = small    
+        TextColor = green
+        Color = green
+    }
+}

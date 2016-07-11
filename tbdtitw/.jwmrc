@@ -1,0 +1,661 @@
+<?xml version="1.0"?>
+
+<JWM>
+<!-- not used  <Clock format="%H:%M:%S">xclock -d</Clock> not used -->
+<!-- not used  <StartupCommand>volumeicon</StartupCommand> not used- ->
+<!-- not used  <StartupCommand>setxkbmap -model pc105 -layout gb -variant ,qwerty </StartupCommand>  not used  -->
+<!-- not used  <StartupCommand>tint2</StartupCommand> not used  -->
+<!-- not used  <StartupCommand>gogglesmm --hide</StartupCommand> not used  -->
+<!-- not used  <StartupCommand>conky</StartupCommand> not used  -->
+<!-- not used  <StartupCommand>stalonetray</StartupCommand> not used  -->
+<!-- not used  <StartupCommand>gkrellm</StartupCommand> not used  -->
+<!-- not used  <StartupCommand>/home/kelsoo/tidy/wpchanger</StartupCommand> not used  -->
+<!-- not used  <Swallow name="wicd-gtk"> wicd-client</Swallow> not used  -->
+<!-- not used  <Swallow name="volumeicon"> volumeicon</Swallow> not used  -->
+<!-- not used  <StartupCommand> stalonetray -p -t -d none -v --sticky </StartupCommand> not used  --> <!-- not used  help command = "stalonetray --info" not used  -->
+
+
+<!-- autostart--StartupCommand-->
+<StartupCommand>bashrun2 </StartupCommand>
+<StartupCommand>setxkbmap -model pc105 -layout gb -variant ,qwerty </StartupCommand>
+<StartupCommand>dclock -geometry 200x70-50+50 -date "Dragora GNU/Linux Libre %Y"</StartupCommand>
+<StartupCommand>simpleswitcher -bw 4 -bc "#00ff00" -fg "#ffffff" -bg "#444444" -hlfg "#000000" -hlbg "#00ff00"</StartupCommand>
+
+
+
+<!-- The root menu. -->
+<RootMenu onroot="1">
+<Program icon="/usr/share/pixmaps/dragora/bashrun2.png" label="Bashrun2">bashrun2</Program>
+<Program icon="/usr/share/pixmaps/dragora/terminal.png" label="Terminal">xterm</Program>
+<Program icon="/usr/share/pixmaps/dragora/home.png" label="Home">rox</Program>
+<Menu icon="/usr/share/pixmaps/dragora/folder-green.png" label="Applications">
+
+<!-- sub-menu-terminal -->
+    <Menu label="terminal apps">
+ 	<Program  icon="/usr/share/pixmaps/dragora/abook.png" label="abook">xterm abook</Program> 
+	<Program  icon="/usr/share/pixmaps/dragora/alsamixer.png" label="alsamixer">xterm -e alsamixer</Program>  
+    <Program  icon="/usr/share/pixmaps/dragora/bashburn.png" label="bashburn">xterm -e bashburn</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/cal.png" label="Cal">xterm -e cal -3</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/cplay.png" label="cplay">xterm -e cplay</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/cmus.png" label="cmus">xterm -e cmus</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/ctorrent.png" label="Ctorrent">xterm -e ctorrent</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/elinks.png" label="elinks">xterm -e elinks</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/feh.png" label="feh">feh -B white -g 1024x768</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/ffplay.png" label="ffplay">xterm -e ffplay</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/gnugo.png" label="Gnugo">xterm -e gnugo</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/hwinfo.png" label="hwinfo">xterm -e hwinfo > hwinfo.txt</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/links.png" label="links -g">xterm -e links -g</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/mrxvt.png" label="mrxvt">mrxvt</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/netrik.png" label="netrik">xterm -e netrik</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/weechat.png" label="weechat">xterm -e  weechat</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/ne.png" label="ne">xterm -e ne</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/ranger.png" label="ranger">xterm -e ranger</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/rtorrent.png" label="Rtorrent">xterm -e rtorrent</Program>
+    <Program  icon="/usr/share/pixmaps/dragora/urxvt.png" label="urxvt">urxvtc</Program>
+    <Program  icon="/usr/share/pixmaps/dragora/xterm.png" label="xterm">xterm</Program>
+
+  </Menu>
+
+<Separator/> 
+
+<!-- sub-menu-tiny-non-gtk-qt -->
+    <Menu label="tiny">
+
+
+	<Program  icon="/usr/share/pixmaps/dragora/adie.png" label="adie"> adie</Program>    
+	<Program  icon="/usr/share/pixmaps/dragora/dillo.png" label="dillo">dillo</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/dxirc.png" label="dxirc">dxirc</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/fifth.png" label="fifth">fifth</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/fxite.xpm" label="fxite">fxite</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/gogglesmm.png" label="gogglesmm">gogglesmm</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/jupp.png" label="jupp">jupp</Program>
+    <Program  icon="/usr/share/pixmaps/dragora/siag.png" label="siag">siag</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/sk1.png"  label="sk1">sk1</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/skencil.png" label="skencil">skencil</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/sxiv.png" label="sxiv">xterm -e sxiv</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/xcalc.png" label="xcalc">xcalc</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/xedit.png" label="xedit">xedit</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/xfe.png" label="xfe">xfe</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/xkill.png" label="xkill">xkill</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/graphics.png"  label="xpaint">xpaint</Program>
+	<Program  icon="/usr/share/pixmaps/dragora/xtrlock.png" label="xtrlock">xtrlock</Program>
+
+
+  </Menu>
+
+<Separator/> 
+<!-- sub-menu-light-(light-gtk) -->
+  <Menu label="light">    
+	<Program icon="/usr/share/pixmaps/dragora/abiword.png" label="abiword">abiword</Program>
+	<Program icon="/usr/share/pixmaps/dragora/claws.png" label="claws">claws-mail</Program>
+	<Program icon="/usr/share/pixmaps/dragora/dopewars.png" label="Dopewars">dopewars</Program>
+	<Program icon="/usr/share/pixmaps/dragora/geeqie.png" label="geeqie">geeqie</Program>
+	<Program icon="/usr/share/pixmaps/dragora/gkrellm.png" label="gkrellm">gkrellm</Program>  
+	<Program icon="/usr/share/pixmaps/dragora/gnumeric.png" label="gnumeric">gnumeric</Program>
+	<Program icon="/usr/share/pixmaps/dragora/lilyterm.png"  label="Lilyterm">lilyterm</Program>
+	<Program icon="/usr/share/pixmaps/dragora/mupdf.png"  label="Mupdf">mupdf</Program>
+	<Program icon="/usr/share/pixmaps/dragora/netsurf.png" label="Netsurf">netsurf</Program>
+	<Program icon="/usr/share/pixmaps/dragora/rox.png" label="rox">rox</Program>
+	<Program icon="/usr/share/pixmaps/dragora/transmission.png" label="Transmission">transmission</Program>
+	<Program icon="/usr/share/pixmaps/dragora/xfburn.png"  label="Xfburn">xfburn -d</Program>
+	<Program icon="/usr/share/pixmaps/dragora/xpdf.png"  label="xPdf">xpdf</Program>
+
+  </Menu>
+
+<Separator/> 
+<!-- sub-menu-Heavy-(heavy and large gtk-Qt) -->
+  <Menu label="Heavy">
+
+	<Program icon="/usr/share/pixmaps/dragora/cups.png" label="CUPS">icecat http://localhost:631/</Program>	
+	<Program icon="/usr/share/pixmaps/dragora/epdfview.png"  label="epdfview">epdfview</Program>
+ 	<Program icon="/usr/share/pixmaps/dragora/gftp.png" label="gftp">gftp</Program> 
+ 	<Program icon="/usr/share/pixmaps/dragora/gimp.png" label="Gimp">gimp-2.6</Program>
+ 	<Program icon="/usr/share/pixmaps/dragora/icecat.png" label="icecat">icecat</Program>
+	<Program icon="/usr/share/pixmaps/dragora/inkscape.png"  label="Inkscape">inkscape</Program> 
+	<Program icon="/usr/share/pixmaps/dragora/libreoffice.png" label="libreoffice">libreoffice</Program>
+	<Program icon="/usr/share/pixmaps/dragora/midori.png" label="midori">midori</Program>
+	<Program icon="/usr/share/pixmaps/dragora/nessie.png" label="Nessie">seamonkey</Program>
+	<Program icon="/usr/share/pixmaps/dragora/rename.png" label="Rename"> exec:/usr/lib/Thunar/ThunarBulkRename %F</Program>
+	<Program icon="/usr/share/pixmaps/dragora/scribus.png" label="Scribus">scribus</Program>
+
+  </Menu>
+
+
+</Menu>
+
+
+<Separator/>  
+
+ <!-- sub-menu-keybindings X -->    
+<Menu icon="/usr/share/pixmaps/dragora/folder-green.png" label="Key-bindings">
+	<Menu label="Key-bindings-X">
+<Program  icon="/usr/share/pixmaps/dragora/eyes.png" label="X-apps">xterm -e links -g</Program>
+<Separator/>
+<Program   icon="/usr/share/pixmaps/dragora/gartoon-png-32/gogglesmm.png" label="W-a | audio">gogglesmm</Program>
+<Program  icon="/usr/share/pixmaps/dragora/brasero.png" label="W-b | bashburn">eterm -e bashburn</Program>
+<Program  icon="/usr/share/pixmaps/dragora/calculator.png" label="W-c | Calc">xcalc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/dillo.xpm" label="W-d | dillo">dillo</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xedit.png" label="W-e | xedit">xedit</Program>
+<Program  icon="/usr/share/pixmaps/dragora/adie.png" label="W-f | adie"> adie</Program>
+<Program  icon="/usr/share/pixmaps/dragora/gogglesmm.png" label="W-g | Gogglesmm">gogglesmm</Program>
+<Program  icon="/usr/share/pixmaps/dragora/htop.png" label="W-h | H-top">xterm -e htop</Program>
+<Program  icon="/usr/share/pixmaps/dragora/dxirc.png" label="W-i | dirc">dxirc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/fxite.xpm" label="W-j | Fxite"> fxite</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xkill.png" label="W-k | xkill">xkill</Program>
+<Program  icon="/usr/share/pixmaps/dragora/leafpad.png" label="W-l | leafpad">leafpad</Program>
+<Program  icon="/usr/share/pixmaps/dragora/mplayer.png" label="W-m | MPlayer">xterm -e mplayer</Program>
+<Program  icon="/usr/share/pixmaps/dragora/netsurf.png" label="W-n | netsurf">netsurf</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xfe.png" label="W-o | xfe">xfe</Program>
+<Program  icon="/usr/share/pixmaps/dragora/pidgin.png" label="W-p | pidgin">pidgin</Program>
+<Program  icon="/usr/share/pixmaps/dragora/geeqie.png" label="W-q | geeQie">geeqie</Program>
+<Program  icon="/usr/share/pixmaps/dragora/rox.png" label="W-r | rox">rox</Program>
+<Program  icon="/usr/share/pixmaps/dragora/siag.jpg" label="W-s | Siag office">siag</Program>
+<Program  icon="/usr/share/pixmaps/dragora/terminal.png" label="W-t | terminal">lilyterm</Program>
+<Program  icon="/usr/share/pixmaps/dragora/feh.png" label="W-u | feh">feh  -B white -g 1024x768</Program>
+<Program  icon="/usr/share/pixmaps/dragora/mixer.png" label="W-v | alsamixer">xterm -e alsamixer</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xpaint.png" label="W-w | xpaint">xpaint</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xtrlock.png" label="W-x | xtrlock">xtrlock</Program>
+<Program  icon="/usr/share/pixmaps/dragora/fbpanel.png" label="W-y | fbpanel">fbpanel</Program>
+<Program  icon="/usr/share/pixmaps/dragora/bashburn2.png" label="W-z | Bashrun2">bashrun2</Program>
+
+	</Menu>
+<Separator/>
+
+ <!-- sub-menu-keybindings console -->   
+ 
+	<Menu label="Key-bindings-console">
+<Program  icon="/usr/share/pixmaps/dragora/terminal.png" label="terminal-apps">xterm</Program>
+<Separator/>
+<Program  icon="/usr/share/pixmaps/dragora/audio.png" label="W-a | audio">xterm -e cplay</Program>
+<Program  icon="/usr/share/pixmaps/dragora/brasero.png" label="W-b | bashburn">eterm -e bashburn</Program>
+<Program  icon="/usr/share/pixmaps/dragora/calender.png" label="W-c | Cal">xterm -e cal -c</Program>
+<Program  icon="/usr/share/pixmaps/dragora/browser1.png" label="W-d | xterm -e links -g">dillo</Program>
+<Program  icon="/usr/share/pixmaps/dragora/edit.png" label="W-e | xedit">xedit</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-f | firc"> firc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-g | gnugo">gnugo</Program>
+<Program  icon="/usr/share/pixmaps/dragora/htop.png" label="W-h | H-top">xterm -e htop</Program>
+<Program  icon="/usr/share/pixmaps/dragora/firc.png" label="W-i | firc">dxirc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/fxite.png" label="W-j | Fxite"> fxite</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xkill.png" label="W-k | xkill">xkill</Program>
+<Program  icon="/usr/share/pixmaps/dragora/leafpad.png" label="W-l | leafpad">leafpad</Program>
+<Program  icon="/usr/share/pixmaps/dragora/mplayer.png" label="W-m | MPlayer">xterm -e mplayer</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-n | ne">xterm -e ne</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-o | xfe">xfe</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-p | pidgin">pidgin</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-q | geeQie">geeqie</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-r | ranger">xterm -e ranger</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-s | sxiv">xterm -e sxiv</Program>
+<Program  icon="/usr/share/pixmaps/dragora/terminal.png" label="W-t | terminal">lilyterm</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-u | feh">feh -B white -g 1024x768</Program>
+<Program  icon="/usr/share/pixmaps/dragora/mixer.png" label="W-v | volume mixer">xterm -e alsamixer</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-w | xpaint">xpaint</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-x | xtrlock">xtrlock</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-x | btxtrlock">btxtrlock</Program>
+<Program  icon="/usr/share/pixmaps/dragora/default.png" label="W-y | fbpanel">fbpanel</Program>
+<Program  icon="/usr/share/pixmaps/dragora/bashrun2.png" label="W-z | Bashrun2">bashrun2</Program>
+	</Menu>
+</Menu>
+
+<Separator/>
+
+<Menu icon="/usr/share/pixmaps/dragora/folder-green.png" label="Games">
+<Program icon="/usr/share/pixmaps/dragora/xboard.png"label="Xboard">xboard</Program>
+<Program icon="/usr/share/pixmaps/dragora/dopewars.png"label="Dopewars">dopewars</Program>
+<Program icon="/usr/share/pixmaps/dragora/gnugo.png"label="Gnugo">xterm -e gnugo</Program>
+</Menu>    
+         
+<Separator/>
+
+<Menu  icon="/usr/share/pixmaps/dragora/default.png"icon="folder-green.png" label="Office">
+<Program icon="/usr/share/pixmaps/dragora/abiword.png"label="abiword">abiword</Program>
+<Program icon="/usr/share/pixmaps/dragora/gnucash.png"label="gnucash">gnucash</Program>
+<Program icon="/usr/share/pixmaps/dragora/gnumeric.png"label="Gnumeric">gnumeric</Program>
+<Program icon="/usr/share/pixmaps/dragora/libreoffice.png"label="libreoffice">libreoffice</Program>
+<Program icon="/usr/share/pixmaps/dragora/scribus.png"label="scribus">scribus</Program>
+<Program icon="/usr/share/pixmaps/dragora/siag.png"label="siag">siag</Program>
+
+</Menu>
+
+<Separator/>
+
+<Menu  icon="/usr/share/pixmaps/dragora/folder-green.png" label="Graphics">
+<Program icon="/usr/share/pixmaps/dragora/gimp.png" label="Gimp">gimp</Program>
+<Program icon="/usr/share/pixmaps/dragora/inkscape.png"  label="Inkscape">inkscape</Program>
+<Program icon="/usr/share/pixmaps/dragora/geeqie.png"  label="geeqie">geeqie</Program>
+<Program icon="/usr/share/pixmaps/dragora/epdfview.png"  label="epdfview">epdfview</Program>
+<Program icon="/usr/share/pixmaps/dragora/mupdf.png"  label="Mupdf">mupdf</Program>
+<Program icon="/usr/share/pixmaps/dragora/xpdf.png"  label="xPdf">xpdf</Program>
+<Program icon="/usr/share/pixmaps/dragora/xpaint.png"  label="xpaint">xpaint</Program>
+<Program icon="/usr/share/pixmaps/dragora/xsane.png" label="Xsane">skencil</Program>
+<Program icon="/usr/share/pixmaps/dragora/sk1.png"  label="sk1">sk1</Program>
+<Program icon="/usr/share/pixmaps/dragora/skencil.png"  label="skencil"  >skencil</Program>
+</Menu>
+
+<Separator/>
+
+
+<Menu  icon="/usr/share/pixmaps/dragora/folder-green.png" label="Network">
+<Program  icon="/usr/share/pixmaps/dragora/window-close.png" label="X-apps">xtermmm -e links -g</Program>
+<Separator/>
+<Program icon="/usr/share/pixmaps/dragora/claws.png" label="claws">claws-mail</Program>
+<Program  icon="/usr/share/pixmaps/dragora/icecat.png" label="GNU-Icecat">icecat</Program>
+<Program  icon="/usr/share/pixmaps/dragora/nessie.png" label="nessie">seamonkey</Program>
+<Program  icon="/usr/share/pixmaps/dragora/midori.png" label="midori">midori</Program>
+<Program  icon="/usr/share/pixmaps/dragora/dillo.png" label="dillo">dillo</Program>
+<Program  icon="/usr/share/pixmaps/dragora/fifth.png" label="fifth">fifth</Program>
+<Program  icon="/usr/share/pixmaps/dragora/transmission.png" label="Transmission">transmission</Program>
+<Program  icon="/usr/share/pixmaps/dragora/gftp.png" label="gftp">gftp</Program> 
+<Separator/>
+
+<Program  icon="/usr/share/pixmaps/dragora/terminal.png" label="terminal-apps">xterm -e links -g</Program>
+
+
+<Separator/>
+
+<Program  icon="/usr/share/pixmaps/dragora/links.png" label="links -g">xterm -e links -g</Program>
+<Program  icon="/usr/share/pixmaps/dragora/elinks.png" label="elinks">xterm -e elinks</Program>
+<Program  icon="/usr/share/pixmaps/dragora/netrik.png" label="netrik">xterm -e netrik</Program>
+<Program  icon="/usr/share/pixmaps/dragora/rtorrent.png" label="Rtorrent">xterm -e rtorrent</Program>
+<Program  icon="/usr/share/pixmaps/dragora/ctorrent.png" label="Ctorrent">xterm -e ctorrent</Program>
+</Menu>
+
+<Separator/>
+
+<Menu  icon="/usr/share/pixmaps/dragora/folder-green.png" label="Multimedia">
+<Program  icon="/usr/share/pixmaps/dragora/terminal.png" label="terminal-apps">xtermmm -e elinks</Program>
+<Separator/>
+<Program icon="/usr/share/pixmaps/dragora/alsamixer.png"label="alsamixer">xterm -e alsamixer</Program>
+<Program icon="/usr/share/pixmaps/dragora/cplay.png"label="Cplay">xterm -e cplay</Program>
+<Program icon="/usr/share/pixmaps/dragora/gogglesmm.png"label="Gogglesmm">gogglesmm</Program>
+<Program icon="/usr/share/pixmaps/dragora/ffplay.png"label="ffplay">xterm -e ffplay</Program>
+</Menu>
+
+<Separator/>
+
+<Menu  icon="/usr/share/pixmaps/dragora/folder-green.png" label="System">
+<Program  icon="/usr/share/pixmaps/dragora/window-close.png" label="X-apps">xtermmm -e elinks</Program>
+
+<Separator/>
+
+<Program  icon="/usr/share/pixmaps/dragora/fxite.xpm" label="Reconfigure JWM">fxite ~/.jwmrc</Program>       
+<Program  icon="/usr/share/pixmaps/dragora/cups.png" label="CUPS">icecat http://localhost:631/</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xcalc.png" label="xcalc">xcalc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/search.png" label="search">xterm -e locate -i </Program>
+<Program  icon="/usr/share/pixmaps/dragora/xfburn.png" label="xfburn">/usr/bin/xfburn</Program>
+<Program  icon="/usr/share/pixmaps/dragora/xarchiver.png" label="Xarchiver">xarchiver</Program>
+<Program  icon="/usr/share/pixmaps/dragora/fontforge.png" label="Fontforge">fontforge</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="Programs">xfe /usr/bin</Program>
+<Program  icon="/usr/share/pixmaps/dragora/rename.png" label="Rename"> exec:/usr/lib/Thunar/ThunarBulkRename %F</Program>
+
+</Menu>
+
+<Separator/>
+
+
+<Menu icon="/usr/share/pixmaps/dragora/folder-green.png" label="Utilities">
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="Fonts">xfontsel</Program>
+<Program icon="/usr/share/pixmaps/dragora/window-properties.png" label="Window Properties"> xprop | xmessage -file - </Program>
+<Program icon="/usr/share/pixmaps/dragora/memory.png" label="Memory"> xterm -e su -c ps_mem</Program>
+
+</Menu>
+
+<Separator/>
+
+<Menu icon="/usr/share/pixmaps/dragora/folder-green.png" label="Key-maps">
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="GB keymap">setxkbmap -model pc105 -layout gb -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="SE keymap">setxkbmap -model pc105 -layout se -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="AR keymap">setxkbmap -model pc105 -layout ar -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="DE keymap">setxkbmap -model pc105 -layout de -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="US keymap">setxkbmap -model pc105 -layout us -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="PT keymap">setxkbmap -model pc105 -layout pt -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="CZ keymap">setxkbmap -model pc105 -layout cz -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="RU keymap">setxkbmap -model pc105 -layout ru -variant ,qwerty </Program>
+<Program icon="/usr/share/pixmaps/dragora/font.png" label="FR keymap">setxkbmap -model pc105 -layout fr -variant ,qwerty </Program>
+</Menu>
+
+
+<Separator/>
+
+<Program icon="/usr/share/pixmaps/dragora/lock.png" label="Lock"> xtrlock </Program>
+<Program icon="/usr/share/pixmaps/dragora/lock.png" label="btrLock"> btrxtrlock </Program>
+
+<Separator/>
+
+<Restart label="Restart" icon="restart.png"/>
+<Exit label="Exit" confirm="false" icon="quit.png"/>
+</RootMenu>
+
+<!-- The mouse button3 menu. -->
+
+<RootMenu height="10" onroot="3">
+<Program icon="/usr/share/pixmaps/dragora/bashrun2.png" label="Bashrun2">bashrun2</Program>
+<Program icon="/usr/share/pixmaps/dragora/rox.png" label="rox">rox</Program>
+<Menu    icon="/usr/share/pixmaps/dragora/folder-green.png" label="/">
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/">xfe /</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="applications">rox /usr/share/applications/</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/usr/bin">xfe /usr/bin</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/usr/share">xfe /usr/share</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/etc">xfe /etc</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/tmp">xfe /tmp</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/home">xfe /home</Program>
+<Program  icon="/usr/share/pixmaps/dragora/folder-green.png" label="/media">xfe /media</Program>
+</Menu>
+
+<Separator/>
+
+<Menu  icon="/usr/share/pixmaps/dragora/folder-green.png" label="Home">
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Desktop">xfe ~/Desktop</Program>
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Images">xfe ~/Images</Program>
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Documents">xfe ~/Documents</Program>
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Video">xfe ~/Video</Program>
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Music">xfe ~/Music</Program>
+<Program   icon="/usr/share/pixmaps/dragora/folder-green.png" label="Documents">xfe ~/Documents</Program>
+<Program   icon="/usr/share/pixmaps/dragora/fxite.png" label="JWM configure">fxite ~/.jwmrc</Program>   
+</Menu> 
+
+<Separator/>
+
+<Program label="Print screen" key="Print">xterm -e scrot -cd 10</Program>
+<Program label="Office">libreoffice</Program>
+<Program label="Network">xterm wicd-curses</Program>
+<Separator/>
+<Program icon="/usr/share/pixmaps/xterm.png"label="xterm">xterm</Program>
+<Program icon="/usr/share/pixmaps/Terminals.png"label="Terminal">lilyterm</Program>
+
+<Separator/>
+
+<Program label="Config">fxite ~/.jwmrc</Program>
+<Restart label="Refresh" />
+<Exit label="Logout" confirm="false"/>
+<Program label="Suspend"></Program>
+<Program label="Restart"></Program>
+
+</RootMenu>
+
+    <!-- Options for program groups. -->
+<Group>
+<Class>Pidgin</Class>
+<Option>sticky</Option>
+</Group>
+
+<Group>
+<Class>wbar</Class>
+<Option>layer:above</Option>
+</Group>
+
+<Group>>
+<Name>gkrellm2</Name>
+<Name>stalonetray</Name>
+<Option>nolist</Option>
+<Option>nopager</Option>
+<Option>noshade</Option>
+<Option>notitle</Option>
+</Group>
+
+
+<Group>
+<Name>xterm</Name>
+<Name>lilyterm</Name>
+<Name>mrxvt</Name>
+<Name>urxvt</Name>
+<Option>maximized</Option>
+</Group>
+
+<Group>
+<Name>bashrun2</Name>
+<Option>nolist</Option>
+<Option>nopager</Option>
+<Option>noshade</Option>
+<Option>notitle</Option>
+</Group>
+
+<Group>
+<Name>dclock</Name>
+<Option>nolist</Option>
+<Option>nopager</Option>
+<Option>noshade</Option>
+<Option>notitle</Option>
+</Group>
+
+<Group>
+<Class>URxvt</Class> 
+<Class>xterm</Class> 
+<Class>mrxvt</Class>
+<Class>lilyterm</Class>
+<Class>urxvt</Class>
+<Class>rox</Class>
+<Option>iignore</Option>
+</Group>
+
+
+<!-- panel is called tray in jwm. These are the settings for the bottom tray -->
+    <!-- Tray at the bottom. -->
+ <Tray  x="0" y="-1" height="24" autohide="false">
+
+<!-- Additional TrayButton attribute: label -->
+<TrayButton label="Menu">root:1</TrayButton>
+
+<TrayButton  icon="eyes.png" label="">showdesktop</TrayButton>
+
+<!-- Additional Pager attributes; width, height -->
+<Pager/>
+
+<!-- Additional TaskList attribute: maxwidth -->
+<TaskList/>
+
+<Dock/>
+ disable dock if you use stalonetray
+<!-- Additional Swallow attribute: height -->
+
+<Swallow name="xload" width="64">xload -nolabel -bg black -fg green -hl white</Swallow>
+<Swallow name="Separator" width="25">Separator</Swallow>
+
+
+
+<!-- clock -->
+<Clock format="%H:%M:%S">xclock -d</Clock> 
+</Tray>
+
+
+<!-- panel is called tray in jwm. These are the settings for the top tray -->
+<!-- Tray at the top -- shortcuts. -->
+<!-- The RH mouse button menu - button3 -->
+<Tray  x="0" y="1" height="24" autohide="false">
+<!-- Additional TrayButton attribute: icon -->
+<TrayButton label="x">root:3</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/bashrun2.png" >exec:bashrun2</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/lilyterm.png"  >exec:lilyterm</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/xterm.png"  >exec:xterm</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/mrxvt.png"   >exec:mrxvt</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/alsmixer.png"  >xterm alsamixer</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/fxite.xpm"   >exec:fxite</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/ranger.png"   >exec:xterm -e ranger</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/rox.png"   >exec:rox</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/xfe.png"  >exec:xfe</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/dillo.xpm"   >exec:dillo</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/xpaint.png"   >exec:xpaint</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/skencil.png"   >exec:skencil</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/nessie.png"   >exec:seamonkey</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/siag.png"   >exec:siag</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/dxirc.png"   >exec:dxirc</TrayButton>
+<TrayButton  icon="/usr/share/pixmaps/dragora/xkill.png"    >exec:xkill</TrayButton>
+
+
+
+<!-- Additional TrayButton attribute: label -->
+<TrayButton label="Shutdown">exec:dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Stop </TrayButton>
+<TrayButton label="log out">exec:dbus-send --system --print-reply --dest="org.freedesktop.ConsoleKit" /org/freedesktop/ConsoleKit/Manager org.freedesktop.ConsoleKit.Manager.Restart</TrayButton>
+</Tray>
+
+
+
+    <!-- Visual Styles -->
+    <WindowStyle>
+        <Font>FreeSans-9:bold</Font>
+        <Width>4</Width>
+        <Height>20</Height>
+        <Active>
+            <Text>#FFFFFF</Text>
+            <Title>#009900:#00ff00</Title>
+            <Outline>#000000</Outline>
+            <Opacity>1.0</Opacity>
+        </Active>
+        <Inactive>
+            <Text>#FFFFFF</Text>
+            <Title>#333333:#111111</Title>
+            <Outline>#000000</Outline>
+            <Opacity>0.5:0.9:0.1</Opacity>
+        </Inactive>
+    </WindowStyle>
+    <TrayStyle>
+        <Font>FreeSans-9:bold</Font>
+        <Background>#111111</Background>
+        <Foreground>#FFFFFF</Foreground>
+        <Opacity>0.75</Opacity>
+    </TrayStyle>
+    <TaskListStyle>
+        <Font>FreeSans-9:bold</Font>
+        <ActiveForeground>#FFFFFF</ActiveForeground>
+        <ActiveBackground>#111111:#333333</ActiveBackground>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#333333:#111111</Background>
+    </TaskListStyle>
+    <PagerStyle>
+        <Outline>#000000</Outline>
+        <Text>#FFFFFF</Text>
+        <Foreground>#444444</Foreground>
+        <Background>#111111</Background>
+        <ActiveForeground>#00ff00</ActiveForeground>
+        <ActiveBackground>#009900</ActiveBackground>
+    </PagerStyle>
+    <MenuStyle>
+        <Font>FreeSans-9</Font>
+        <Foreground>#FFFFFF</Foreground>
+        <Background>#333333</Background>
+        <ActiveForeground>#000000</ActiveForeground>
+        <ActiveBackground>#009900:#00ff00</ActiveBackground>
+        <Opacity>0.85</Opacity>
+    </MenuStyle>
+    <PopupStyle>
+        <Font>FreeSans-9</Font>
+        <Outline>#000000</Outline>
+        <Foreground>#000000</Foreground>
+        <Background>#00ff00</Background>
+    </PopupStyle>
+
+    <!-- Path where icons can be found.
+         IconPath can be listed multiple times to allow searching
+         for icons in multiple paths. -->
+
+    <IconPath>
+        /usr/share/icons/dragora
+    </IconPath>
+
+    <IconPath>
+        /usr/share/pixmaps/dragora/
+    </IconPath>
+
+    <IconPath>
+
+    </IconPath>
+
+    <IconPath>
+			~/.icons    
+    </IconPath>
+
+    <!-- Virtual Desktops -->
+    <!-- Desktop tags can be contained within Desktops for desktop names. -->
+    
+<Desktops width="8" height="1">
+
+	<!-- <Desktops count="8">  -->     
+
+	<!-- Default background. Note that a Background tag can be
+         contained within a Desktop tag to give a specific background for that desktop.-->
+    <!-- not used    <Background type="image"> ~/.wallpaper/dragora-gnu-linux-lire.png</Background>  not used -->
+
+<Background type="image"> ~/.wallpaper/dragora-gnu-linux-libre.png</Background>
+
+</Desktops> 
+
+
+
+    <!-- Double click speed (in milliseconds) -->
+    <DoubleClickSpeed>400</DoubleClickSpeed>
+
+    <!-- Double click delta (in pixels) -->
+    <DoubleClickDelta>2</DoubleClickDelta>
+
+    <!-- The focus model (sloppy or click) -->
+    <FocusModel>sloppy</FocusModel>
+
+    <!-- The snap mode (none, screen, or border) -->
+    <SnapMode distance="10">border</SnapMode>
+
+    <!-- The move mode (outline or opaque) -->
+    <MoveMode>opaque</MoveMode>
+
+    <!-- The resize mode (outline or opaque) -->
+    <ResizeMode>opaque</ResizeMode>
+
+    <!-- Key bindings -->
+<Key key="Up">up</Key>
+<Key key="Down">down</Key>
+<Key key="Right">right</Key>
+<Key key="Left">left</Key>
+<Key key="h">left</Key>
+<Key key="j">down</Key>
+<Key key="k">up</Key>
+<Key key="l">right</Key>
+<Key key="Return">select</Key>
+<Key key="Escape">escape</Key>
+    
+	<!-- comments -->
+	<!-- Waste of time if simpleswitcher is installed -->
+	<!-- comments:  -->
+	<!-- <Key mask="A" key="Tab">nextstacked</Key> -->
+	<!-- <Key mask="A" key="Tab">next</Key> -->
+
+<Key mask="A" key="Tab">nextstacked</Key>
+<Key mask="A" key="#">desktop#</Key>
+<Key mask="A" key="F1">root:1</Key>
+<Key mask="A" key="F2">window</Key>
+<Key mask="A" key="F1">root:3</Key>
+<Key mask="A" key="F4">close</Key>
+<Key mask="" key="Print">exec:xterm -e scrot -cd 5</Key>
+
+    <!-- the Poor Man's Tiling Window Manager -->
+
+
+
+
+    <!-- fast application run  -->
+   <Key mask="A" key="a">exec:gogglesmm</Key>
+   <Key mask="A" key="b">exec:pcmanfm</Key>
+   <Key mask="A" key="c" >exec:xterm</Key>
+   <Key mask="A" key="d">exec:claws-mail</Key>
+   <Key mask="A" key="e">exec:sudo /sbin/halt -p</Key>
+   <Key mask="A" key="f">exec:sudo /sbin/reboot</Key>
+   <Key mask="A" key="g">exec:xchat</Key>
+   <Key mask="A" key="h">exec:leafpad</Key>
+   <Key mask="A" key="i">exec:libreoffice3.5</Key>
+   <Key mask="A" key="j">exec:firefox</Key>
+   <Key mask="A" key="k">exec:pcmanfm</Key>
+   <Key mask="A" key="l" >exec:xterm</Key>
+   <Key mask="A" key="m">exec:claws-mail</Key>
+   <Key mask="A" key="n">exec:sudo /sbin/halt -p</Key>
+   <Key mask="A" key="o">exec:sudo /sbin/reboot</Key>
+   <Key mask="A" key="p">exec:xchat</Key>
+   <Key mask="A" key="r">exec:leafpad</Key>
+   <Key mask="A" key="q">exec:libreoffice3.5</Key>
+   <Key mask="A" key="s">exec:skippy-xd</Key>
+   <Key mask="A" key="t">exec:pcmanfm</Key>
+   <Key mask="A" key="u" >exec:xterm</Key>
+   <Key mask="A" key="v">exec:claws-mail</Key>
+   <Key mask="A" key="w">exec:sudo /sbin/halt -p</Key>
+   <Key mask="A" key="x">exec:sudo /sbin/reboot</Key>
+   <Key mask="A" key="y">exec:xchat</Key>
+   <Key mask="A" key="z">exec:leafpad</Key>
+
+</JWM>
+<!-- works up to here! -->

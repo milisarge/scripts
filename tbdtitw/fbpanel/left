@@ -1,0 +1,89 @@
+Global {
+    edge = bottom
+    allign = left
+    margin = 5
+    widthtype = pixel
+    width = 120
+    height = 24
+    transparent = true
+    tintcolor = #000000
+    alpha = 0
+    setdocktype = true
+    setpartialstrut = true
+    autohide = false
+    heightWhenHidden = 2
+    roundcorners = false
+    roundcornersradius = 0
+    layer = above
+    MaxElemHeight = 10
+    setlayer = false
+}
+
+
+Plugin {
+    type = menu
+    config {
+        IconSize = 12
+        icon = logo
+        systemmenu {
+        }
+    }
+}
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+Plugin {
+    type = cpu
+    config {
+        Color = green
+    }
+}
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+Plugin {
+    type = net
+    expand = false
+    padding = 0
+    config {
+        interface = eth0
+        TxLimit = 20
+        RxLimit = 190
+        TxColor = red
+        RxColor = blue
+    }
+}
+
+Plugin {
+    type = space
+    config {
+        size = 5
+    }
+}
+
+#Plugin {
+ #   type = genmon
+ #   config {
+ #       Command = echo "Up: "$(uptime)
+  #      PollingTime = 2
+ #       TextSize = small
+ #       TextColor = green
+ #   }
+#}
+Plugin {
+    type = space
+    config {
+        size = 6
+    }
+}
+
