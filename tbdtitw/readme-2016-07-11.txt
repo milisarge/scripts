@@ -75,7 +75,13 @@ fittstool
 http://gungre.ch/dragora/repo/frusen/stable/fittstool/fittstool-0.2-i486-1.tlz  #32bit
 or
 http://gungre.ch/dragora/repo/frusen/stable/fittstool/fittstool-0.2-x86_64-1.tlz  #64bit
+
 read the config for tips! it a killer application
+
+## xrandr ##
+xrandr is needed for screen brighness in fittstool. 
+
+
 
 ## tint2 and applications for all the bling to work as in kelsoo's video ##
 
@@ -87,6 +93,12 @@ Note:you will need to install/build bwm-ng-0.6.1  before you build tint2
 
 I have included a 32bit version in the dottint2 directory
 bwm-ng-0.6.1-i486-1.tlz   #32bit 
+
+Note: you will need to build xdotool to enable add and remove desktops via clicking the desktop number
+xdotool
+
+http://www.semicomplete.com/projects/xdotool/
+
 
 gsimplecal
 http://dmedvinsky.github.io/gsimplecal/
@@ -143,6 +155,21 @@ Onyx-lessr-red
 I have included a version in the openbox directory
 put it in ~/.themes
 
+## helper wallpapers ##
+helper wallpapers are included for both single and dual screens.
+
+They live in ~/images/backgrounds 
+
+microde-wallpaper-dual.png
+microde-wallpaper.png
+
+Wallpaper switching is done via a script in ~/wp 
+each script takes this format.
+
+Esetroot -scale ~/images/backgrounds/microde-wallpaper.png
+
+wallpapers can be changed via the openboxmenu and the obbrowser script
+
 ## scripts ##
 scripts live in 
 
@@ -154,6 +181,7 @@ https://github.com/trizen/obbrowser
 
 For the rox bookmarks be in the openbox menu you need to enable 
 bookmarks.py
+
 
 see http://openbox.org/wiki/Openbox:Pipemenus
 http://icculus.org/openbox/pipemenus/bookmarks.py
