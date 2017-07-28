@@ -1,0 +1,22 @@
+
+ server {
+         listen 80 default_server;
+         server_name _;
+               root   /var/www/main_serv/htdocs;
+               index index.php index.html index.htm admin.php admin.html admin.htm;
+         include /etc/nginx/security;
+
+ # Logging --
+ access_log  /var/log/nginx/main_serv.access.log;
+ error_log  /var/log/nginx/main_serv.log notice;
+
+
+
+	location ~ \.php$ {
+		 try_files $uri =404;
+		       fastcgi_pass unix:/var/run/php-fpm/main_serv.socket;
+		       fastcgi_index index.php;
+		       include /etc/nginx/fastcgi_params;
+		 }
+
+ }
