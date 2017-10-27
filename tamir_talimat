@@ -8,5 +8,13 @@ grep -rli 'cards.tar' * | xargs -i@ sed -i 's/cards.tar/mps/g' @
 
 
 grep -rli 'Description:' * | xargs -i@ sed  -i 's/Description:/Tanım:/g' @
+grep -rli 'Description=' * | xargs -i@ sed  -i 's/Description=/Tanım:/g' @
+grep -rli 'Url=' * | xargs -i@ sed  -i 's/Url=/Url:/g' @
+grep -rli 'description:' * | xargs -i@ sed  -i 's/description:/Tanım:/g' @
+grep -rli 'Description :' * | xargs -i@ sed  -i 's/Description :/Tanım:/g' @
 grep -rli 'Packager:' * | xargs -i@ sed  -i 's/Packager:/Paketçi:/g' @
+grep -rli 'packager:' * | xargs -i@ sed  -i 's/packager:/Paketçi:/g' @
+grep -rli 'Packagers:' * | xargs -i@ sed  -i 's/Packagers:/Paketçi:/g' @
+grep -rli 'Packager :' * | xargs -i@ sed  -i 's/Packager :/Paketçi:/g' @
 grep -rli 'Depends on:' * | xargs -i@ sed  -i 's/Depends on:/Gerekler:/g' @
+grep -rli 'Depends on :' * | xargs -i@ sed  -i 's/Depends on :/Gerekler:/g' @
