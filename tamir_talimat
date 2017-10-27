@@ -1,3 +1,5 @@
+grep -rli 'build()' * | xargs -i@ sed  -i 's/build()/derle()/g' @
+grep -rli 'build ()' * | xargs -i@ sed  -i 's/build ()/derle()/g' @
 grep -rli 'Description:' * | xargs -i@ sed  -i 's/Description:/Tanım:/g' @
 grep -rli 'Description=' * | xargs -i@ sed  -i 's/Description=/Tanım:/g' @
 grep -rli 'Url=' * | xargs -i@ sed  -i 's/Url=/Url:/g' @
