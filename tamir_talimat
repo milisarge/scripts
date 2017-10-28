@@ -1,3 +1,14 @@
+grep -rli 'name=' * | xargs -i@ sed  -i 's/name=/isim=/g' @
+grep -rli '$name' * | xargs -i@ sed  -i 's/$name/$isim/g' @
+grep -rli '${name}' * | xargs -i@ sed  -i 's/${name}/${isim}/g' @
+grep -rli 'version=' * | xargs -i@ sed  -i 's/version=/surum=/g' @
+grep -rli '$version' * | xargs -i@ sed  -i 's/$version/$surum/g' @
+grep -rli '${version}' * | xargs -i@ sed  -i 's/${version}/${surum}/g' @
+grep -rli '${version%.*}' * | xargs -i@ sed  -i 's/${version%.*}/${surum%.*}/g' @
+grep -rli 'release=' * | xargs -i@ sed  -i 's/release=/devir=/g' @
+grep -rli '$release' * | xargs -i@ sed  -i 's/$release/$devir/g' @
+grep -rli '${release}' * | xargs -i@ sed  -i 's/${release}/${devir}/g' @
+grep -rli 'source=' * | xargs -i@ sed  -i 's/source=/kaynak=/g' @
 grep -rli 'build()' * | xargs -i@ sed  -i 's/build()/derle()/g' @
 grep -rli 'build ()' * | xargs -i@ sed  -i 's/build ()/derle()/g' @
 grep -rli 'Description:' * | xargs -i@ sed  -i 's/Description:/Tanım:/g' @
